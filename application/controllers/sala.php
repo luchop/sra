@@ -19,7 +19,6 @@ class Sala extends CI_Controller {
 
     function NuevaSala() {
 		$this->form_validation->set_rules('Nombre', 'nombre', 'xss_clean');
-		$this->form_validation->set_rules('Correo', 'correo', 'callback_CorreoUnico');
 
         $data['VistaMenu'] = 'vista_menu_admin';
         if ($this->form_validation->run()) {
