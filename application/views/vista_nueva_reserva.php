@@ -24,7 +24,7 @@ echo form_open('reserva/NuevaReserva',  array('id' => 'Reserva', 'name' => 'Rese
 
 <label for='Comienzo'>Comienzo *</label>
 <?php
-echo "<input type='text' name='Comienzo' id='Comienzo' size='12' maxlength='10' class='required date' onclick='";
+echo "<input type='text' name='Comienzo' id='Comienzo' size='12' maxlength='10' class='required' onclick='";
 echo 'fPopCalendar("Comienzo")'."' value='".$Fecha."'/>";
 ?><br />
 
@@ -32,10 +32,10 @@ echo 'fPopCalendar("Comienzo")'."' value='".$Fecha."'/>";
 <input type='checkbox' id='DiaCompleto' name='DiaCompleto' /><br />
 
 <label for='HoraInicio'>Hora inicio *</label>
-<select><?php echo $ComboHoras; ?></select><br />
+<select name='HoraInicio' id='HoraInicio'><?php echo $ComboHoras; ?></select><br />
 
 <label for='HoraFin'>Hora fin *</label>
-<select><?php echo $ComboHoras; ?></select><br />
+<select name='HoraFin' id='HoraFin'><?php echo $ComboHoras; ?></select><br />
 
 <hr />
 <label for='Repeticion'>Repeticion *</label>
@@ -43,9 +43,12 @@ echo 'fPopCalendar("Comienzo")'."' value='".$Fecha."'/>";
 
 <label for='FechaFinal'>Fecha Final *</label>
 <?php
-echo "<input type='text' name='FechaFinal' id='FechaFinal' size='12' maxlength='10' class='required date' onclick='";
+echo "<input type='text' name='FechaFinal' id='FechaFinal' size='12' maxlength='10' class='required' onclick='";
 echo 'fPopCalendar("FechaFinal")'."' value='".$Fecha."'/>";
 ?><br />
+
+<label for='DiasSemana'>DiasSemana *</label>
+<?php echo $DiasSemana; ?><br />
 
 <button class='button positive' style='margin-left:220px;'> 
 	<img src='<?php echo base_url();?>bt/images/icons/tick.png' alt='' /> Guardar

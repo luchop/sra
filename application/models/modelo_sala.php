@@ -17,7 +17,7 @@ class Modelo_sala extends CI_Model {
 
 	function Insert($Nombre, $Descripcion, $CodGrupo, $Capacidad, $CorreoAdministrador, $Activo, $Orden) {
         $sql = "INSERT INTO $this->Tabla (Nombre, Descripcion, CodGrupo, Capacidad, CorreoAdministrador, Activo, Orden, CodInstitucion) 
-                VALUES ('$Nombre', '$Descripcion', '$CodGrupo', '$Capacidad', '$CorreoAdministrador', $Activo, $Orden, $this->CodInstitucion)";
+                VALUES ('$Nombre', '$Descripcion', '$CodGrupo', '$Capacidad', '$CorreoAdministrador', $Activo, '$Orden', $this->CodInstitucion)";
         $this->db->query($sql);
     }
 	

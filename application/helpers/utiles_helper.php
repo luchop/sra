@@ -29,5 +29,10 @@ function ClavePronunciable() {
             rand(11,99);
 }
 
+function FormatoMinuto($minuto){
+	if ($minuto<10)
+		return '0'.$minuto;
+	return $minuto;
+}
 
 /* End of file utiles.php */

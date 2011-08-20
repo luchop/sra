@@ -16,7 +16,6 @@ class Grupo extends CI_Controller {
 
     function NuevoGrupo() {
 		$this->form_validation->set_rules('Nombre', 'nombre', 'xss_clean');
-		$this->form_validation->set_rules('Correo', 'correo', 'callback_CorreoUnico');
 
         $data['VistaMenu'] = 'vista_menu_admin';
         if ($this->form_validation->run()) {
@@ -118,15 +117,6 @@ class Grupo extends CI_Controller {
 			$this->modelo_grupo->Delete($CodGrupo);
         redirect('grupo','refresh');
     }
-
-	function CorreoUnico($Correo) {
-		if( $this->modelo_grupo->ExisteCorreo($Correo) ) {
-			$this->form_validation->set_message('CorreoUnico', 'Este correo ya se encuentra registrado.');
-			return FALSE;
-		}
-		else
-			return TRUE;
-	}
 
 }
 

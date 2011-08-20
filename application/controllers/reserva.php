@@ -8,6 +8,7 @@ class Reserva extends CI_Controller {
 
     function __construct() {
         parent::__construct();
+		$this->load->model('modelo_repeticion', '', TRUE);
 		$this->load->model('modelo_reserva', '', TRUE);
 		$this->load->model('modelo_sala', '', TRUE);
 		$this->load->library('funciones');
@@ -15,12 +16,17 @@ class Reserva extends CI_Controller {
 		$CodInstitucion=$this->session->userdata('CodInstitucion');
 		$this->modelo_sala->SetCodInstitucion($CodInstitucion);
 		$this->modelo_reserva->SetCodInstitucion($CodInstitucion);
+		$this->modelo_repeticion->SetCodInstitucion($CodInstitucion);
+		
+		$CodUsuario=0;
+		$this->modelo_reserva->SetCodUsuario($CodUsuario);
+		$this->modelo_repeticion->SetCodUsuario($CodUsuario);
 		
 		//Periodo de tiempo entre horas del combo
-		$this->RangoHoras='00:20';
+		$this->RangoHoras='00:30';
 		//Horas en las que inicio el combo de seleccion de hora
 		$this->HoraInicioCombo='7:00';
-		$this->HoraFinCombo='20:30';
+		$this->HoraFinCombo='21:00';
     }
 
     function Index() {
@@ -33,17 +39,30 @@ class Reserva extends CI_Controller {
         $data['VistaMenu'] = 'vista_menu_admin';
 		$data['Fecha'] = date('d/m/Y');
         if ($this->form_validation->run()) {
-		    $Activo = $this->input->post('Activo')? 1: 0;
+		    $Estado = $this->input->post('Estado')? 1: 0;
 			if ($this->session->userdata('UsuarioPrueba')==1){
 				$data['Mensaje'] = $this->funciones->MensajePrueba();
 			}else{
-				$CodReserva = $this->modelo_reserva->Insert($this->input->post('Nombre'), $this->input->post('Correo'), $Activo);
+				$CodRepeticion=0;
+				$Comienzo=explode('/',$this->input->post('Comienzo'));
+				$FechaInicio=mktime(0,0,0, $Comienzo[1],$Comienzo[0],$Comienzo[2]);
+				$Final=explode('/',$this->input->post('FechaFinal'));
+				$FechaFinal=mktime(0,0,0, $Final[1],$Final[0],$Final[2]);
+				$HoraInicio=$this->input->post('HoraInicio')+$FechaInicio;
+				$HoraFin=$this->input->post('HoraFin')+$FechaInicio;
+				$DiaCompleto = $this->input->post('DiaCompleto')? 1: 0;
+				$DiasSemana = (($this->input->post('DiasSemana_1'))?1:0).(($this->input->post('DiasSemana_2'))?1:0).(($this->input->post('DiasSemana_3'))?1:0).(($this->input->post('DiasSemana_4'))?1:0).(($this->input->post('DiasSemana_5'))?1:0).(($this->input->post('DiasSemana_6'))?1:0).(($this->input->post('DiasSemana_7'))?1:0);
+				if ($this->input->post('Repeticion')!='N'){
+					$CodRepeticion=$this->modelo_repeticion->Insert($this->input->post('Nombre'), $this->input->post('Descripcion'), $Estado, $this->input->post('CodSala'), $HoraInicio, $HoraFin, $DiaCompleto, $FechaFinal, $DiasSemana, $this->input->post('Repeticion'));
+				}
+				$CodReserva = $this->modelo_reserva->Insert($this->input->post('Nombre'), $this->input->post('Descripcion'), $Estado, $this->input->post('CodSala'), $HoraInicio, $HoraFin, $CodRepeticion);
 				$data['Mensaje'] = "Se ha registrado una nueva reserva.";
 			}
             $data['VistaPrincipal'] = 'vista_mensaje';
         } else {
 			$data['ComboSalas'] = $this->modelo_sala->ComboSalas(set_value('CodSala'));
 			$data['ComboHoras'] = $this->ComboHoras();
+			$data['DiasSemana'] = $this->DiasSemana();
 			$data['Repeticiones'] = $this->TiposRepeticion();
             $data['VistaPrincipal'] = 'vista_nueva_reserva';
         }
@@ -136,13 +155,24 @@ class Reserva extends CI_Controller {
     }
 	
 	function TiposRepeticion($Tipo='N'){
-		return "<label><input type='radio' name='Repeticion' id='Repeticion' ".(($Tipo=='N')? "checked='checked'":'')." value='N' /> Ninguna</label>
-				<label><input type='radio' name='Repeticion' id='Repeticion' ".(($Tipo=='D')? "checked='checked'":'')." value='D' /> Diaria</label>
-				<label><input type='radio' name='Repeticion' id='Repeticion' ".(($Tipo=='S')? "checked='checked'":'')." value='S' /> Semanal</label>
-				<label><input type='radio' name='Repeticion' id='Repeticion' ".(($Tipo=='M')? "checked='checked'":'')." value='M' /> Mensual</label>";
+		return " <input type='radio' name='Repeticion' id='Repeticion' ".(($Tipo=='N')? "checked='checked'":'')." value='N' /> Ninguna <br />
+				<label>&nbsp;</label><input type='radio' name='Repeticion' id='Repeticion' ".(($Tipo=='D')? "checked='checked'":'')." value='D' /> Diaria <br />
+				<label>&nbsp;</label><input type='radio' name='Repeticion' id='Repeticion' ".(($Tipo=='S')? "checked='checked'":'')." value='S' /> Semanal <br />
+				<label>&nbsp;</label><input type='radio' name='Repeticion' id='Repeticion' ".(($Tipo=='M')? "checked='checked'":'')." value='M' /> Mensual <br />";
+	}
+	
+	function DiasSemana($Dias='0000000'){
+		return " <input type='checkbox' name='DiasSemana_1' id='DiasSemana_1' ".(($Dias{0}=='1')? "checked='checked'":'')." value='1' /> Lunes <br />
+				<label>&nbsp;</label><input type='checkbox' name='DiasSemana_2' id='DiasSemana_2' ".(($Dias{1}=='1')? "checked='checked'":'')." value='1' /> Martes <br />
+				<label>&nbsp;</label><input type='checkbox' name='DiasSemana_3' id='DiasSemana_3' ".(($Dias{2}=='1')? "checked='checked'":'')." value='1' /> Miercoles <br />
+				<label>&nbsp;</label><input type='checkbox' name='DiasSemana_4' id='DiasSemana_4' ".(($Dias{3}=='1')? "checked='checked'":'')." value='1' /> Jueves <br />
+				<label>&nbsp;</label><input type='checkbox' name='DiasSemana_5' id='DiasSemana_5' ".(($Dias{4}=='1')? "checked='checked'":'')." value='1' /> Viernes <br />
+				<label>&nbsp;</label><input type='checkbox' name='DiasSemana_6' id='DiasSemana_6' ".(($Dias{5}=='1')? "checked='checked'":'')." value='1' /> Sabado <br />
+				<label>&nbsp;</label><input type='checkbox' name='DiasSemana_7' id='DiasSemana_7' ".(($Dias{6}=='1')? "checked='checked'":'')." value='1' /> Domingo <br />
+				";
 	}
 
-	function ComboHoras(){
+	function ComboHoras($Hora='',$Minuto=''){
 		$HoraInicio=explode(':',$this->HoraInicioCombo);
 		$MinutoInicio=$HoraInicio[1];
 		$HoraInicio=$HoraInicio[0];
@@ -153,14 +183,15 @@ class Reserva extends CI_Controller {
 		
 		$Rango=explode(':',$this->RangoHoras);
 		$Rango=$Rango[1];
-		
-		$combo="<option value='1'>$this->HoraInicioCombo</option>";
+		$combo='';
+
 		for ($h=$HoraInicio;$h<=$HoraFin;$h++){
 			for ($m=0;$m<60;$m=$m+$Rango){
-				$combo.="<option value='000'>$h :: $m</option>";
+				$selected=($Hora==$h && $Minuto==$m)? "selected='selected'" : '';
+				if (!($h==$HoraInicio && $m<$MinutoInicio))
+					$combo.="<option value='".gmmktime($h,$m,0, 1,1,1970)."' $selected>".$h.":".FormatoMinuto($m)."</option>";
 			}
 		}
-		$combo.="<option value='24'>$this->HoraInicioCombo</option>";
 		return $combo;
 	}
 

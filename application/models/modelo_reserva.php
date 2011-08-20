@@ -5,19 +5,25 @@ class Modelo_reserva extends CI_Model {
     //nombre de la tabla
     private $Tabla = 'reserva';
 	private $CodInstitucion;
+	private $CodUsuario;
 
     function __construct() {
         parent::__construct();
 		$this->CodInstitucion=0;
+		$this->CodUsuario=0;
     }
 	
 	function SetCodInstitucion($CodInstitucion){
 		$this->CodInstitucion=$CodInstitucion;
 	}
+	
+	function SetCodUsuario($CodUsuario){
+		$this->CodUsuario=$CodUsuario;
+	}
 
-	function Insert($Nombre, $Descripcion, $CodGrupo, $Capacidad, $CorreoAdministrador, $Activo, $Orden) {
-        $sql = "INSERT INTO $this->Tabla (Nombre, Descripcion, CodGrupo, Capacidad, CorreoAdministrador, Activo, Orden, CodInstitucion) 
-                VALUES ('$Nombre', '$Descripcion', '$CodGrupo', '$Capacidad', '$CorreoAdministrador', $Activo, $Orden, $this->CodInstitucion)";
+	function Insert($Nombre, $Descripcion, $Estado, $CodSala, $HoraInicio, $HoraFin, $CodRepeticion) {
+        $sql = "INSERT INTO $this->Tabla (Nombre, Descripcion, Estado, CodSala, HoraInicio, HoraFin, CodRepeticion, CodUsuario, CodInstitucion) 
+                VALUES ('$Nombre', '$Descripcion', '$Estado', '$CodSala', '$HoraInicio', '$HoraFin', '$CodRepeticion', $this->CodUsuario, $this->CodInstitucion)";
         $this->db->query($sql);
     }
 	
@@ -68,18 +74,6 @@ class Modelo_reserva extends CI_Model {
         return $s."</select>";       
     }
 	
-	function ClaveCorrespondeSala($Clave, $CodReserva) {
-        $sql = "SELECT CodReserva FROM $this->Tabla WHERE CodReserva=$CodReserva
-				AND Clave=MD5('$Clave')";
-        $query = $this->db->query($sql);
-		return ($query->num_rows()>0);	
-	}
-    
-    function ExisteCorreo($s) {
-        $sql = "SELECT CodReserva FROM $this->Tabla WHERE CorreoAdministrador='$s' and CodInstitucion=$this->CodInstitucion ";
-        $query = $this->db->query($sql);
-        return ($query->num_rows()>0);
-    }
 }
 
 ?>
