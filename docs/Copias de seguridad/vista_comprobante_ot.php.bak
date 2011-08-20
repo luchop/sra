@@ -1,0 +1,30 @@
+<script type="text/javascript">
+$(document).ready(function() {
+	$("#OT").validate();
+});
+</script>
+<div id='formulario' class='span-14 prefix-5 suffix-5 last'>
+<fieldset><legend>Comprobante de &oacute;rden de trabajo</legend>
+<br />
+<?php 
+echo form_open('ot/Comprobante',  array('id' => 'OT', 'name' => 'OT'));
+?>
+
+<label for='Numero'>N&uacute;mero</label>
+<input type='text' id='Numero' name='Numero' size='10' maxlength='10' value='' /><br />
+
+<label for='CodCliente'>Cliente </label>
+<?php echo $ComboClientes; ?><br />
+
+<label for='Fecha'>Fecha </label>
+<?php
+echo "<input type='text' name='Fecha' id='Fecha' size='12' maxlength='10' class='required date' onclick='";
+echo 'fPopCalendar("Fecha")'."' value=''/>";
+?><br />
+
+<button class='button positive' style='margin-left:220px;'> 
+	<img src='<?php echo base_url();?>bt/images/icons/tick.png' alt='' /> Imprimir
+</button> 	  
+</form>
+</fieldset>
+</div>

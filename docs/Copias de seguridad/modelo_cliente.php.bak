@@ -1,0 +1,144 @@
+<?php
+
+class Modelo_cliente extends CI_Model {
+
+    //nombre de la tabla
+    private $Tabla = 'cliente';
+	
+	private $EsCliente;
+
+    function __construct() {
+        parent::__construct();
+		$this->EsCliente=1;
+    }
+	
+	function SetCodInstitucion($CodInstitucion){
+		$this->CodInstitucion=$CodInstitucion;
+	}
+	
+	function EsProveedor(){
+		$this->EsCliente=0;
+	}
+
+    function Insert($Nombre, $Contacto, $NIT, $Direccion, $Telefono, $Correo, $Notas, $Activo, $CodInstitucion) {
+        $sql = "INSERT INTO $this->Tabla (Nombre, Contacto, NIT, Direccion, 
+				Telefono, Correo, Notas, Activo, CodInstitucion, EsCliente) 
+                VALUES ('$Nombre', '$Contacto', '$NIT', '$Direccion', 
+				'$Telefono', '$Correo', '$Notas', $Activo, $CodInstitucion,$this->EsCliente)";
+        $this->db->query($sql);  
+        
+        $sql = "SELECT LAST_INSERT_ID() AS Codigo";
+        $query = $this->db->query($sql);
+        if ( $query->num_rows()>0 )
+           return $query->row()->Codigo;
+        else        
+            return 0;
+    }
+
+    function Update($CodCliente, $Nombre, $Contacto, $NIT, $Direccion, $Telefono, $Correo, $Notas, $Activo, $CodInstitucion) {
+        $sql = "UPDATE $this->Tabla SET Nombre='$Nombre', Contacto='$Contacto', NIT='$NIT',
+                Direccion='$Direccion', Telefono='$Telefono', Correo='$Correo', Notas='$Notas',
+				Activo=$Activo		
+                WHERE CodCliente=$CodCliente";
+        return $this->db->query($sql);
+    }
+
+    function Busqueda($Nombre, $Contacto, $NIT, $Correo) {
+        $sql = "select * from $this->Tabla where 
+                (Nombre like '%$Nombre%' or '$Nombre'='') and 
+                (Contacto like '%$Contacto%' or '$Contacto'='') and 
+                (NIT like '%$NIT%' or '$NIT'='') and 
+                (Correo='$Correo' or '$Correo'='') 
+				and EsCliente='$this->EsCliente'
+                ORDER BY Nombre";
+        return $this->db->query($sql);
+    }
+
+    function getFila($CodCliente) {
+        $sql = "select * from $this->Tabla where CodCliente=$CodCliente";
+        return $this->db->query($sql)->row();
+    }
+
+    function Delete($CodCliente) {
+        $this->db->where('CodCliente', $CodCliente);
+        $this->db->delete($this->Tabla);
+    }
+    
+    function EsAdministrador($CodCliente) {
+        $sql = "SELECT * FROM cliente WHERE CodCliente=? AND Activo=1";  //1:administrador
+        $query = $this->db->query($sql, array($CodCliente));
+        return $query->num_rows()>0;        
+    }
+    
+    function BuscarCliente($Cliente){
+        $sql = "SELECT * FROM cliente
+                WHERE Nombres LIKE('%$Cliente%')
+                OR Apellidos LIKE('%$Cliente%')
+                ORDER BY Nombres, Apellidos";
+        $resultado=mysql_query($sql,$link); 
+        return $resultado;
+    }
+    
+    function NombreCliente($CodCliente) {
+        $sql = "select * FROM cliente WHERE CodCliente=$CodCliente";
+        $query = $this->db->query($sql);
+        if($query->num_rows()>0) {
+            $row = $query->row();
+            return $row->Nombre;
+        } else
+            return '';
+    }
+    
+    function ComboCliente($CodCliente) {
+        $sql = "select * from cliente order by Nombre";
+        $resultado = $this->db->query($sql);
+        $s = "<select name='CodCliente' id='CodCliente'>";
+        foreach($resultado->result() as $row) 
+            $s .= "<option value=".$row->CodCliente.($CodCliente==$row->CodCliente? ' selected ':'').">".$row->Nombre."</option>";
+        return $s."</select>";       
+    }
+    
+    function ExisteNick($s) {
+        $sql = "SELECT CodCliente FROM cliente WHERE Nick='$s'";
+        $query = $this->db->query($sql);
+        return ($query->num_rows()>0);
+    }
+    
+    function ExisteCorreo($s) {
+        $sql = "SELECT CodCliente FROM cliente WHERE Correo='$s'";
+        $query = $this->db->query($sql);
+        return ($query->num_rows()>0);
+    }
+    
+    //devuelve codigo de cliente.	
+    function Verifica($nick, $clave, &$Codigo) {
+		$sql = "SELECT CodCliente FROM cliente WHERE Nick=? AND Clave=md5(?)";							
+		$query = $this->db->query($sql, array($nick, $clave));
+		if ($query->num_rows() > 0) {    //encontrado 
+			$row = $query->row(); 
+			$Codigo = $row->CodCliente;
+			return true;
+		}
+		else
+			return false;
+	}
+    
+    function GetNombre($CodCliente) {
+        $sql = "SELECT Nombre FROM cliente WHERE CodCliente=$CodCliente";
+        $query = $this->db->query($sql);
+        if( $query->num_rows()>0) {
+            $row = $query->row();
+            return $row->Nombre;
+        }
+        else
+            return '';
+    }
+    
+    function CambiaClave( $CodCliente, $NuevaClave ) {
+        $sql = "UPDATE cliente SET Clave=MD5($NuevaClave) WHERE CodCliente=$CodCliente";
+        $this->db->query($sql);
+    }
+ 
+}
+
+?>

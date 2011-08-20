@@ -1,0 +1,174 @@
+<?php
+
+class OT extends CI_Controller {
+
+    function __construct() {
+        parent::__construct();
+        $this->load->model('modelo_cliente', '', TRUE);
+		$this->load->model('modelo_articulo', '', TRUE);
+		$this->load->model('modelo_ot', '', TRUE);
+		$this->load->library(array('funciones','fpdf'));
+		define('FPDF_FONTPATH',$this->config->item('fonts_path'));
+
+		//Establecemos los codigos de institucion y usuario para los modelos que los necesitan
+		$CodInstitucion=1;
+		$this->modelo_ot->SetInstitucion($CodInstitucion);
+		$this->modelo_ot->SetUsuario(2);
+		$this->modelo_articulo->SetCodInstitucion($CodInstitucion);
+		$this->modelo_cliente->SetInstitucion($CodInstitucion);
+    }
+
+    function Index() {
+	    $data['VistaPrincipal'] = 'vista_menu_operador';
+        $this->load->view('vista_maestra', $data);
+    }
+
+    function NuevaOT() {
+		$this->form_validation->set_rules('Cliente', 'cliente', 'xss_clean');
+		$this->form_validation->set_rules('Fecha', 'fecha', 'xss_clean');		
+		
+        $data['VistaMenu'] = 'vista_menu_operador';
+		$data['Fecha'] = date('d/m/Y');
+        if ($this->form_validation->run()) {
+			$Fecha = $this->funciones->FechaParaMySQL($this->input->post('Fecha'));//CodCliente CodArticulo CodMarca CodModelo Fecha Precio Notas
+			$CodOT = $this->modelo_ot->Insert($this->input->post('Numero'),$this->input->post('CodCliente'), $this->input->post('CodArticulo'), $this->input->post('CodMarca'), $this->input->post('CodModelo'), $Fecha, $this->input->post('CodEstado'), $this->input->post('Precio'), $this->input->post('Notas'));
+            $data['Mensaje'] = 'Se ha registrado un nuevo ot.';
+            $data['VistaPrincipal'] = 'vista_mensaje';
+        } else {
+			$data['ComboClientes'] = $this->modelo_cliente->ComboCliente($this->input->post('CodCliente'),1);
+			$data['ComboArticulos'] = $this->modelo_articulo->ComboArticulo($this->input->post('CodArticulo'));
+			$data['ComboMarca'] = $this->modelo_ot->ComboMarca($this->input->post('CodMarca'));
+			$data['ComboModelos'] = $this->modelo_ot->ComboModelo($this->input->post('CodModelo'));
+			$data['ComboEstados'] = $this->modelo_ot->ComboEstado($this->input->post('CodEstado'));
+            $data['VistaPrincipal'] = 'vista_nueva_ot';
+        }
+		$this->load->view('vista_maestra', $data);
+    }
+
+    function BuscaParaModificar($Modificacion) {
+        $this->form_validation->set_rules('Fecha', 'fecha', 'xss_clean');
+        //$this->form_validation->set_rules('Desde', 'fecha inicial', 'xss_clean');
+		//$this->form_validation->set_rules('Hasta', 'fecha final', 'xss_clean');
+		
+        $data['VistaMenu'] = 'vista_menu_operador';
+        if ($this->form_validation->run()) {
+            $Fecha = $this->funciones->FechaParaMySQL($this->input->post('Fecha'));
+			$registros = $this->modelo_ot->Busqueda($this->input->post('CodCliente'),$this->input->post('CodEstado'), $this->input->post('Numero'), $Fecha);
+            if( $Modificacion==1 )
+                $Vista = 'vista_modifica_ot';
+            else
+                $Vista = 'vista_consulta_ot';
+                
+            if ($registros->num_rows() == 0) {
+                $data['Mensaje'] = 'No se encontraron registros que cumplan el criterio de b&uacute;squeda';
+                $data['VistaPrincipal'] = 'vista_mensaje';
+				$this->load->view('vista_maestra', $data);
+            } else if ($registros->num_rows() == 1) {            //solo un registro encontrado
+                $data['Fila'] = $registros->row();
+				$data['ComboClientes'] = $this->modelo_cliente->ComboCliente($data['Fila']->CodCliente,1);
+				$data['ComboArticulos'] = $this->modelo_articulo->ComboArticulo($data['Fila']->CodArticulo);
+				$data['ComboMarca'] = $this->modelo_ot->ComboMarca($data['Fila']->CodMarca);
+				$data['ComboModelos'] = $this->modelo_ot->ComboModelo($data['Fila']->CodModelo);
+				$data['ComboEstados'] = $this->modelo_ot->ComboEstado($data['Fila']->CodEstado);
+                $data['VistaPrincipal'] = $Vista;                      //'vista_modifica_ot' o 'vista_consulta_ot';
+                $this->load->view('vista_maestra', $data);
+            } else {                                             // varios registros encontrados: muestra lista
+                $this->load->library('table');
+                $this->table->set_empty("&nbsp;");
+                $this->table->set_heading('No.', 'Nombre del cliente', 'Fecha', 'Precio', 'Acci&oacute;n');
+                $aux = array('table_open' => '<table class="tablaseleccion">');
+                $this->table->set_template($aux);
+                $i = 0;
+                foreach ($registros->result() as $registro)
+                    $this->table->add_row(++$i, $registro->Nombre, $registro->Fecha, $registro->Precio, 
+						anchor("ot/CargaVista/$Vista/" . $registro->CodOT, 
+                            ($Modificacion=='TRUE'? ' Modificar ':' Ver '), 
+                            array('class'=>($Modificacion=='TRUE'? 'actualiza':'vista'))). '  '.
+                            anchor('ot/BorrarOT/' . $registro->CodOT, 'Eliminar', array('class'=>'elimina','onclick'=>"return confirm('Realmente desea borrar este registro?')")));
+                $data['Tabla'] = $this->table->generate();
+                $data['Vista'] = 'vista_busca_ot';
+                $data['VistaPrincipal'] = 'vista_lista_ots';
+                $this->load->view('vista_maestra', $data);
+            }
+        } else {
+			$data['ComboClientes'] = $this->modelo_cliente->ComboCliente(set_value('CodCliente'));
+			$data['ComboEstados'] = $this->modelo_ot->ComboEstado(set_value('CodEstado'));
+            $data['VistaPrincipal'] = 'vista_busca_ot';
+            $data['Modificacion'] = $Modificacion;            
+			$this->load->view('vista_maestra', $data);
+        }
+    }
+
+    function ModificaOT() {
+		$this->form_validation->set_rules('CodInstitucion', 'institucion', 'xss_clean');
+        $this->form_validation->set_rules('Desde', 'fecha inicial', 'xss_clean');
+		$this->form_validation->set_rules('Hasta', 'fecha final', 'xss_clean');
+		$this->form_validation->set_rules('Precio', 'precio', 'xss_clean');
+		
+        $data['VistaMenu'] = 'vista_menu_operador';
+        if ($this->form_validation->run()) {
+            $Accion = $this->input->post("submit");
+            if ($Accion != "Eliminar") {
+				$Fecha = $this->funciones->FechaParaMySQL($this->input->post('Fecha'));
+				$CodOT = $this->modelo_ot->Update($this->input->post('CodOT'),$this->input->post('Numero'),$this->input->post('CodCliente'), $this->input->post('CodArticulo'), $this->input->post('CodMarca'), $this->input->post('CodModelo'), $Fecha, $this->input->post('CodEstado'), $this->input->post('Precio'), $this->input->post('Notas'));
+				$data['Mensaje'] = 'Se han modificado los datos del ot.';
+                $data['VistaPrincipal'] = 'vista_mensaje';
+            }
+            else {
+                $this->modelo_ot->Delete($this->input->post('CodOT'));
+                $data['Mensaje'] = 'Los datos del ot han sido eliminados';
+                $data['VistaPrincipal'] = 'vista_mensaje';
+            }
+        } else {
+            $data['Fila'] = $this->modelo_ot->getFila($this->input->post('CodOT'));
+			$data['ComboInstituciones'] = $this->modelo_institucion->ComboInstituciones();
+			$data['VistaPrincipal'] = 'vista_modifica_ot';
+        }
+		$this->load->view('vista_maestra', $data);
+    }
+
+    function CargaVista($Vista, $CodOT) {
+        $data['VistaMenu'] = 'vista_menu_operador';
+        $data['Fila'] = $this->modelo_ot->getFila($CodOT);
+		$data['ComboClientes'] = $this->modelo_cliente->ComboCliente($data['Fila']->CodCliente,1);
+		$data['ComboArticulos'] = $this->modelo_articulo->ComboArticulo($data['Fila']->CodArticulo);
+		$data['ComboMarca'] = $this->modelo_ot->ComboMarca($data['Fila']->CodMarca);
+		$data['ComboModelos'] = $this->modelo_ot->ComboModelo($data['Fila']->CodModelo);
+		$data['ComboEstados'] = $this->modelo_ot->ComboEstado($data['Fila']->CodEstado);
+        //$data['ComboInstituciones'] = $this->modelo_institucion->ComboInstituciones($data['Fila']->CodInstitucion);
+        $data['VistaPrincipal'] = $Vista;
+        $this->load->view('vista_maestra', $data);
+    }
+
+    function BorrarOT($CodOT) {
+        $this->modelo_ot->Delete($CodOT);
+        redirect('ot','refresh');
+    }
+	
+	function Comprobante(){
+		$this->form_validation->set_rules('Cliente', 'cliente', 'xss_clean');
+		$this->form_validation->set_rules('Fecha', 'fecha', 'xss_clean');		
+		
+        $data['VistaMenu'] = 'vista_menu_operador';
+		$data['Fecha'] = date('d/m/Y');
+        if ($this->form_validation->run()) {
+			$Fecha = $this->funciones->FechaParaMySQL($this->input->post('Fecha'));//CodCliente CodArticulo CodMarca CodModelo Fecha Precio Notas
+			$data['Fecha']=$Fecha;
+			$data['CodCliente']=$this->modelo_cliente->GetNombre($this->input->post('CodCliente'));
+			$data['CodArticulo']=$this->modelo_articulo->GetNombre($this->input->post('CodArticulo'));
+			$data['CodMarca']=$this->modelo_ot->GetMarcaNombre($this->input->post('CodMarca'));
+			$data['CodModelo']=$this->modelo_ot->GetModeloNombre($this->input->post('CodModelo'));
+			$this->output->set_header('Content: application/pdf');
+			$this->load->view('vista_comprobante_pdf', $data);
+        } else {
+			$data['ComboClientes'] = $this->modelo_cliente->ComboCliente($this->input->post('CodCliente'),1);
+			$data['ComboArticulos'] = $this->modelo_articulo->ComboArticulo($this->input->post('CodArticulo'));
+			$data['ComboMarca'] = $this->modelo_ot->ComboMarca($this->input->post('CodMarca'));
+			$data['ComboModelos'] = $this->modelo_ot->ComboModelo($this->input->post('CodModelo'));
+            $data['VistaPrincipal'] = 'vista_comprobante_ot';
+			$this->load->view('vista_maestra', $data);
+        }
+	}
+}
+
+?>

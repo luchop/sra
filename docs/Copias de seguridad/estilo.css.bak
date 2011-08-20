@@ -1,0 +1,71 @@
+body {
+  background-image:url(../imagenes/rayas.png);
+}
+
+div#formulario label, div#formulario input{
+     display: block;
+     float: left;
+     margin-bottom: 10px;
+}
+
+div#formulario  label{
+     text-align: right;
+     width: 150px;
+     padding-right: 15px;
+}
+
+div#formulario  br{
+     clear: left;
+}
+
+table {
+	margin:auto;
+}
+
+.tablaseleccion {
+    font-family: "Lucida Sans Unicode", Sans-Serif;
+    font-size: 11px;
+    width: 700px;
+    text-align: left;
+}
+.tablaseleccion th {
+    font-size: 13px;
+    font-weight: normal;
+    padding: 8px;
+    background: #FFC268;
+    border-top: 2px solid #24618E;    
+    border-bottom: 1px solid #fff;
+    color: #039;
+}
+.tablaseleccion td {
+    padding: 8px 8px 1px 8px;
+    background: #FCFDD1;
+    border-bottom: 2px solid #fff;
+    color: #669;
+    border-top: 1px solid transparent;
+	height: 1em;
+}
+
+a.actualiza, a.elimina, a.adiciona, a.vista, a.descarga {
+	font-size: 8pt;
+	color:#900;
+	font-weight:bold;
+	padding-left:18px;
+	text-decoration: none;
+}
+
+a.actualiza {
+	background:url(images/update.png) left center no-repeat;
+}
+a.descarga {
+	background:url(images/descarga.png) left center no-repeat;
+}
+a.elimina {
+	background:url(images/delete.png) left center no-repeat;
+}
+a.adiciona {
+	background:url(images/add.png) left center no-repeat;
+}
+a.vista {
+	background:url(images/view.png) left center no-repeat;
+}

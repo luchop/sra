@@ -1,0 +1,23 @@
+<script type="text/javascript">
+$(document).ready(function() {
+	$("#Cliente").validate();
+});
+</script>
+<div id='formulario' class='span-14 prefix-5 suffix-5 last'>
+<fieldset><legend>B&uacute;squeda de Cliente</legend>
+<br />
+<?php 
+echo form_open("cliente/BuscaParaModificar/$Modificacion",  array('id' => 'Cliente', 'name' => 'Cliente'));
+?>
+
+echo "<table cellspacing='4'>";
+echo "<tr><td colspan='2'><h2>Busqueda de $titulo</h2> <br /> ".validation_errors()."</td></tr>"; 
+echo "<tr><td colspan='2'><i>Escriba un criterio simple o compuesto para la b&uacute;squeda</i><br /><br />  </td></tr>";
+echo "<tr><td class='derecha'>Nombre: </td><td> <input type='text' name='Nombre' id='Nombre' maxlength='50' size='40' value='".set_value('Nombre')."' /></td></tr>";
+echo "<tr><td class='derecha'>Contacto: </td><td><input type='text' name='Contacto' id='Contacto' maxlength='50' size='40' value='".set_value('Contacto')."'/></td></tr>";
+echo "<tr><td class='derecha'>NIT: </td><td><input type='text' name='NIT' id='NIT' maxlength='50' size='40' value='".set_value('NIT')."'/></td></tr>";
+echo "<tr><td class='derecha'>Correo: </td><td><input type='text' name='Correo' id='Correo' maxlength='50' size='40' value='".set_value('Correo')."'/></td></tr>";
+echo "<tr><td colspan='2' class='centro'> <br /><input type='submit' name='button' value='Enviar' /> <br /></td></tr>"; 
+echo "</table>";	
+echo "</form>";
+?>

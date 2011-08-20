@@ -1,0 +1,27 @@
+<div id='formulario' class='span-14 prefix-5 suffix-5 last'>
+<fieldset><legend>Reporte por cliente</legend>
+<?php 
+echo '<br />'.validation_errors().'<br />';
+echo form_open("reporte/ReportePorCliente"); 
+?>
+<label for='Desde'>Desde</label>
+<?php echo "<input type='text' name='Desde' id='Desde' maxlength='20' size='20' onclick='fPopCalendar(\"Desde\")' value='".set_value('Desde')."' />"; ?><br />
+
+<label for='Hasta'>Hasta </label>
+<?php echo "<input type='text' name='Hasta' id='Hasta' maxlength='20' size='20' onclick='fPopCalendar(\"Hasta\")' value='".set_value('Hasta')."' />"; ?><br />
+
+<label for='Hasta'>Cliente </label>
+<?php echo $ListaClientes; ?><br />
+
+<label for='Estado'>Estado </label>
+<?php echo $ListaEstados; ?><br />
+
+<label for='Obs'>Incluir observaci&oacute;n </label>
+<?php echo form_checkbox('Obs',1,set_value('Obs')); ?><br />
+
+<button class='button positive' style='margin-left:220px;'> 
+	<img src='<?php echo base_url();?>bt/images/icons/tick.png' alt='' /> Imprimir
+</button> 	  
+</form>
+</fieldset>
+</div>

@@ -1,0 +1,147 @@
+create table IF NOT EXISTS institucion (
+    CodInstitucion INTEGER not null primary key AUTO_INCREMENT, 
+    Nombre char(50) not null,
+	Contacto char(50) not null,
+    Correo char(60) not null,
+	CodPais INTEGER not null,
+	SitioWeb char(60),
+	Telefono char(20),
+	Activo smallInt default 1,
+	Notas char(255)
+) engine=MyISAM; 
+
+create table IF NOT EXISTS usuario (
+    CodUsuario INTEGER not null primary key AUTO_INCREMENT, 
+    Nombre char(50) not null,
+	Correo char(60) not null,
+	Nick char(12) not null,
+	Clave char(64) not null,
+	Activo smallInt default 1,
+	TipoUsuario char(2) not null,
+	CodInstitucion integer not null
+) engine=MyISAM; 
+					
+create table IF NOT EXISTS tipo_usuario (
+    CodTipoUsuario INTEGER not null primary key AUTO_INCREMENT, 
+	Nombre char(15) not null,
+	CodInstitucion integer not null
+) engine=MyISAM; 
+
+create table IF NOT EXISTS contrato (
+    CodContrato INTEGER not null primary key AUTO_INCREMENT, 
+	CodInstitucion integer not null,
+    Desde date not null,
+	Hasta date not null,
+	Precio decimal(9,2),
+	Notas char(255)
+) engine=MyISAM; 
+
+create table IF NOT EXISTS curso (
+    CodCurso INTEGER not null primary key AUTO_INCREMENT, 
+    Nombre char(40) not null,
+    NombreCorto char(10) default '',
+    Orden int null default 0,
+	CodInstitucion int not null
+) engine=MyISAM; 
+
+create table IF NOT EXISTS materia (
+    CodMateria INTEGER not null primary key AUTO_INCREMENT, 
+    CodCurso INTEGER not null, 
+    Nombre char(40) not null,
+    Orden int null default 0,
+    Rotulo int default 0,
+	CodInstitucion int not null
+) engine=MyISAM; 
+
+create table IF NOT EXISTS docente (
+    CodDocente INTEGER not null primary key AUTO_INCREMENT, 
+    Nombres char(25) not null,
+    Apellidos char(20) not null,    
+    Direccion char(100) not null,    
+    Telefono char(25) not null,
+    Correo char(70) not null,
+    Identificacion char(12) not null,
+    CodInstitucion int not null	
+) engine=MyISAM; 
+
+create table IF NOT EXISTS asignacion (
+    CodAsignacion INTEGER not null primary key AUTO_INCREMENT, 
+    CodCurso integer not null,
+    CodMateria integer not null,
+    CodDocente integer not null,
+    Gestion char(10),
+	CodInstitucion int not null
+) engine=MyISAM; 
+
+create table IF NOT EXISTS estudiante (
+    CodEstudiante INTEGER not null primary key AUTO_INCREMENT, 
+    Codigo char(15) not null,
+	Nombres char(25) not null,
+    Paterno char(20) not null,    
+    Materno char(20) not null,    
+    Direccion char(100) not null,    
+    Telefono char(25) not null,
+    Correo char(60) not null,
+    Identificacion char(12) not null,
+    CodCurso INTEGER NOT NULL,
+    CodInstitucion int not null     
+) engine=MyISAM; 
+
+CREATE TABLE notas (
+   CodEstudiante INT NOT NULL,
+   CodMateria INT NOT NULL,
+   Periodo TINYINT NOT NULL,
+   n1 DECIMAL(3,1) DEFAULT 0,
+   n2 DECIMAL(3,1) DEFAULT 0,
+   n3 DECIMAL(3,1) DEFAULT 0,
+   n4 DECIMAL(3,1) DEFAULT 0,
+   n5 DECIMAL(3,1) DEFAULT 0,
+   n6 DECIMAL(3,1) DEFAULT 0,
+   n7 DECIMAL(3,1) DEFAULT 0,
+   n8 DECIMAL(3,1) DEFAULT 0,
+   n9 DECIMAL(3,1) DEFAULT 0,
+   n10 DECIMAL(3,1) DEFAULT 0,
+   n11 DECIMAL(3,1) DEFAULT 0,
+   n12 DECIMAL(3,1) DEFAULT 0,
+   PRIMARY KEY(CodEstudiante, CodMateria, Periodo)
+) ENGINE=MYISAM;
+
+CREATE TABLE registro_docente (
+   CodEstudiante INT NOT NULL,
+   CodMateria INT NOT NULL,
+   Periodo TINYINT NOT NULL,
+   n1 DECIMAL(3,1) DEFAULT 0,
+   n2 DECIMAL(3,1) DEFAULT 0,
+   n3 DECIMAL(3,1) DEFAULT 0,
+   n4 DECIMAL(3,1) DEFAULT 0,
+   n5 DECIMAL(3,1) DEFAULT 0,
+   n6 DECIMAL(3,1) DEFAULT 0,
+   n7 DECIMAL(3,1) DEFAULT 0,
+   n8 DECIMAL(3,1) DEFAULT 0,
+   n9 DECIMAL(3,1) DEFAULT 0,
+   n10 DECIMAL(3,1) DEFAULT 0,
+   n11 DECIMAL(3,1) DEFAULT 0,
+   n12 DECIMAL(3,1) DEFAULT 0,
+   PRIMARY KEY(CodEstudiante, CodMateria, Periodo)
+) ENGINE=MYISAM;
+
+create table historial (
+  CodEstudiante INTEGER  not null,
+  Fecha date not null,
+  CodObs INTEGER not null,
+  Detalle char(50)
+) ENGINE=MYISAM;
+
+create table tarea (
+  CodTarea INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  CodAsignacion INTEGER  not null,
+  Fecha date not null,
+  Descripcion char(200)
+) ENGINE=MYISAM;
+
+CREATE TABLE IF NOT EXISTS valores (
+   Clave CHAR(20) NOT NULL PRIMARY KEY,
+   Numero INT, 
+   Texto CHAR(100),
+   CodInstitucion int not null    
+) ENGINE = MYISAM;

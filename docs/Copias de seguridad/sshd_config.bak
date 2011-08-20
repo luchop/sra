@@ -1,0 +1,22 @@
+Port 22
+Compression delayed
+LogLevel INFO
+TCPKeepAlive yes
+LoginGraceTime 120
+Protocol 2
+MaxAuthTries 6
+MaxSessions 10
+Subsystem sftp internal-sftp -l ERROR
+
+Match User luchopsky
+	PasswordAuthentication   yes
+	PubkeyAuthentication   no
+	AllowTcpForwarding   yes
+	MaxSessions 10
+
+# Catch All
+Match User *
+	AllowTcpForwarding no
+	MaxSessions 0
+	PasswordAuthentication no
+	PubkeyAuthentication no

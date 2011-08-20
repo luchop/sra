@@ -1,0 +1,9 @@
+Datos fijos:
+
+Tipos de usuario:
+
+ 0 - Superadministrador
+ 1 - Administrador
+ 2 - Operador 1
+ 3 - Operador 2
+ 

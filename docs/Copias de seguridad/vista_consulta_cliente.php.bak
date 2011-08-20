@@ -1,0 +1,23 @@
+<div id='formulario' class='span-14 prefix-5 suffix-5 last'>
+<fieldset><legend>Consulta de datos de cliente</legend>
+<br />
+<?php
+if ($EsCliente==1){
+	$titulo= 'cliente';	
+} else {
+	$titulo='proveedor';
+}
+?>
+
+<table style='border:0px;'>
+	<tr><td class='center'>Nombre del <?php echo $titulo ?>: </td><td><?php echo $Fila->Nombre ?></td></tr>
+	<tr><td class='center'>Contacto: </td><td><?php echo $Fila->Contacto ?></td></tr>
+	<tr><td class='center'>NIT: </td><td><?php echo $Fila->NIT ?></td></tr>
+	<tr><td class='center'>Direcci&oacute;n: </td><td><?php echo $Fila->Direccion ?></td></tr>
+	<tr><td class='center'>Tel&eacute;fono: </td><td> <?php echo $Fila->Telefono ?></td></tr>
+	<tr><td class='center'>Correo: </td><td> <?php echo $Fila->Correo ?></td></tr>
+	<tr><td class='center'>Notas: </td><td> <?php echo $Fila->Notas ?></td></tr>
+</table>
+
+</fieldset>
+</div>

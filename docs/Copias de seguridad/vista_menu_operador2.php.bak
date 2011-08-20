@@ -1,0 +1,34 @@
+<h1>Opciones de operador 2: <?php echo $this->session->userdata('Nombre'); ?></h1>
+<div id="page-wrap">
+	<ul class="dropdown">
+		<li><a href='#' title="Contratos">O.T.'s</a>
+			<ul class="sub_menu">				
+				<li><a href='<?php echo base_url() ?>index.php/ot/NuevaOT' title="Registro de nueva O.T.">Nueva O.T.</a></li>
+				<li><a href='<?php echo base_url() ?>index.php/ot/BuscaParaModificar/0' title="Consulta datos de O.T.">Consulta O.T.</a></li>
+			</ul>
+		</li>
+		<li><a href='#' title="Clientes">Clientes</a>
+			<ul class="sub_menu">				
+				<li><a href='<?php echo base_url() ?>index.php/cliente/NuevoCliente' title="Registro de nuevo cliente">Nuevo cliente</a></li>
+				<li><a href='<?php echo base_url() ?>index.php/cliente/BuscaParaModificar/0' title="Consulta de datos de cliente">Consulta cliente</a></li>
+			</ul>
+		</li>
+		<li><a href='#'>Reportes</a>
+			<ul class="sub_menu">				
+				<li><a href='<?php echo base_url() ?>index.php/reportes/ProximosVencimientos' title="Registro de tareas">Oden de trabajo</a></li>
+				<li><a href='<?php echo base_url() ?>index.php/reportes/ProximosVencimientos' title="Registro de tareas">Listado</a></li>
+				<li><a href='<?php echo base_url() ?>index.php/reportes/ProximosVencimientos' title="Registro de tareas">Resumen</a></li>
+			</ul>
+		</li>
+		<li><a href='#' title="Configuracion">Configuraci&oacute;n</a>
+			<ul class="sub_menu">				
+				<li><a href='<?php echo base_url() ?>index.php/articulo/ListaArticulos' title="Registro de articulos">Art&iacute;culos</a></li>
+				<li><a href='<?php echo base_url() ?>index.php/articulo/Marcas' title="Registro de articulos">Marcas</a></li>
+				<li><a href='<?php echo base_url() ?>index.php/articulo/Modelos' title="Registro de articulos">Modelos</a></li>
+			</ul>
+		</li>
+		<li><a href='<?php echo base_url() ?>index.php/cambia_clave' title="Cambia la clave de acceso">Cambio de clave</a></li>
+		<li><a href='<?php echo base_url() ?>index.php/login/Salir' title="Cerrar sesi&oacute;n">Salir</a></li>
+	</ul>
+</div>
+<br /><br /><hr />

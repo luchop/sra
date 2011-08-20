@@ -1,0 +1,29 @@
+<?php
+
+class Modelo_notas extends CI_Model {
+
+    //nombre de la tabla
+    private $Tabla = 'nota';
+
+    function __construct() {
+        parent::__construct();
+    }
+	
+	function Notas($CodMateria, $Fecha, $Trimestre) {
+		$sql = "SELECT DISTINCT estudiante.CodEstudiante, notas.Nota,
+				CONCAT(estudiante.Paterno, ' ', estudiante.Materno, ' ', estudiante.Nombres) AS Nombre
+				FROM curso, materia, estudiante LEFT OUTER JOIN notas 
+				ON estudiante.CodEstudiante=notas.CodEstudiante 
+				AND notas.CodMateria=$CodMateria
+				AND notas.Fecha='$Fecha'
+				AND notas.Trimestre=$Trimestre
+				WHERE curso.CodCurso=materia.CodCurso 
+				AND curso.CodCurso=estudiante.CodCurso
+				AND materia.CodCurso=estudiante.CodCurso
+				AND materia.CodMateria=$CodMateria
+				ORDER BY CONCAT(Paterno, Materno, Nombres)";
+		return $this->db->query($sql);
+	}
+}
+
+?>

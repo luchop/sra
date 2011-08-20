@@ -1,0 +1,29 @@
+<div id='formulario' class='span-16 prefix-4 suffix-4 last'>
+<fieldset><legend>Nuevo cliente</legend>
+<br />
+
+<label for='Nombre'>Nombre *</label>
+<input type='text' readonly name='Nombre' id='Nombre' maxlength='50' size='40' class='required' value='<?php echo $Fila->Nombre; ?>' /><br />
+
+<label for='Precio'>Contacto </label>
+<input type='text' readonly name='Contacto' id='Contacto' maxlength='50' size='40' value='<?php echo $Fila->Contacto; ?>' /><br />
+
+<label for='Precio'>NIT </label>
+<input type='text' readonly name='NIT' id='NIT' maxlength='15' size='15' value='<?php echo $Fila->NIT; ?>' /><br />
+
+<label for='Precio'>Direcci&oacute;n </label>
+<input type='text' readonly name='Direccion' id='Direccion' maxlength='100' size='50' value='<?php echo $Fila->Direccion; ?>' /><br />
+
+<label for='Precio'>Tel&eacute;fono </label>
+<input type='text' readonly name='Telefono' id='Telefono' maxlength='50' size='40' value='<?php echo $Fila->Telefono; ?>' /><br />
+
+<label for='Precio'>Correo *</label>
+<input type='text' readonly name='Correo' id='Correo' maxlength='50' size='40' class='required' value='<?php echo $Fila->Correo; ?>' /><br />
+
+<label for='Notas'>Notas</label>
+<textarea readonly id='Notas' name='Notas' cols='45' rows='4'>
+<?php echo set_value('Notas'); ?>
+</textarea><br /><br />
+
+</fieldset>
+</div>

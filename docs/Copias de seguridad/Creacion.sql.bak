@@ -1,0 +1,123 @@
+create table IF NOT EXISTS curso (
+    CodCurso INTEGER not null primary key AUTO_INCREMENT, 
+    Nombre char(40) not null,
+    NombreCorto char(10) default '',
+    Orden int null default 0
+) engine=MyISAM; 
+
+create table IF NOT EXISTS materia (
+    CodMateria INTEGER not null primary key AUTO_INCREMENT, 
+    CodCurso INTEGER not null, 
+    Nombre char(40) not null,
+    Orden int null default 0,
+    Rotulo int default 0
+) engine=MyISAM; 
+
+create table IF NOT EXISTS docente (
+    CodDocente INTEGER not null primary key AUTO_INCREMENT, 
+    Nombres char(25) not null,
+    Apellidos char(20) not null,    
+    Direccion char(100) not null,    
+    Telefono char(25) not null,
+    Correo char(70) not null,
+    Identificacion char(12) not null    
+) engine=MyISAM; 
+
+create table IF NOT EXISTS asignacion (
+    CodAsignacion INTEGER not null primary key AUTO_INCREMENT, 
+    CodCurso integer not null,
+    CodMateria integer not null,
+    CodDocente integer not null,
+    Gestion char(10)
+) engine=MyISAM; 
+
+create table IF NOT EXISTS estudiante (
+    CodEstudiante INTEGER not null primary key AUTO_INCREMENT, 
+    Nombres char(25) not null,
+    Paterno char(20) not null,    
+    Materno char(20) not null,    
+    Direccion char(100) not null,    
+    Telefono char(25) not null,
+    Correo char(60) not null,
+    Identificacion char(12) not null,
+    CodCurso INTEGER NOT NULL    
+) engine=MyISAM; 
+
+-- necesaria????
+CREATE TABLE notas (
+   CodEstudiante INT NOT NULL,
+   CodMateria INT NOT NULL,
+   Periodo TINYINT NOT NULL,
+   n1 DECIMAL(3,1) DEFAULT 0,
+   n2 DECIMAL(3,1) DEFAULT 0,
+   n3 DECIMAL(3,1) DEFAULT 0,
+   n4 DECIMAL(3,1) DEFAULT 0,
+   n5 DECIMAL(3,1) DEFAULT 0,
+   n6 DECIMAL(3,1) DEFAULT 0,
+   n7 DECIMAL(3,1) DEFAULT 0,
+   n8 DECIMAL(3,1) DEFAULT 0,
+   n9 DECIMAL(3,1) DEFAULT 0,
+   n10 DECIMAL(3,1) DEFAULT 0,
+   n11 DECIMAL(3,1) DEFAULT 0,
+   n12 DECIMAL(3,1) DEFAULT 0,
+   PRIMARY KEY(CodEstudiante, CodMateria, Periodo)
+) ENGINE=MYISAM;
+
+CREATE TABLE registro_docente (
+   CodEstudiante INT NOT NULL,
+   CodMateria INT NOT NULL,
+   Periodo TINYINT NOT NULL,
+   n1 DECIMAL(3,1) DEFAULT 0,
+   n2 DECIMAL(3,1) DEFAULT 0,
+   n3 DECIMAL(3,1) DEFAULT 0,
+   n4 DECIMAL(3,1) DEFAULT 0,
+   n5 DECIMAL(3,1) DEFAULT 0,
+   n6 DECIMAL(3,1) DEFAULT 0,
+   n7 DECIMAL(3,1) DEFAULT 0,
+   n8 DECIMAL(3,1) DEFAULT 0,
+   n9 DECIMAL(3,1) DEFAULT 0,
+   n10 DECIMAL(3,1) DEFAULT 0,
+   n11 DECIMAL(3,1) DEFAULT 0,
+   n12 DECIMAL(3,1) DEFAULT 0,
+   PRIMARY KEY(CodEstudiante, CodMateria, Periodo)
+) ENGINE=MYISAM;
+
+create table asistencia (
+  CodEstudiante INTEGER  not null,
+  Periodo smallInt,
+  Ausencia smallInt,
+  Tardanza smallInt,
+  primary key(CodEstudiante, Periodo)
+) ENGINE=MYISAM; 
+
+create table historial (
+  CodEstudiante INTEGER  not null,
+  Fecha date not null,
+  CodObs INTEGER not null,
+  Detalle char(50)
+) ENGINE=MYISAM;
+
+create table tarea (
+  CodTarea INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  CodAsignacion INTEGER  not null,
+  Fecha date not null,
+  Descripcion char(200)
+) ENGINE=MYISAM;
+
+CREATE TABLE IF NOT EXISTS usuario (
+   CodUsuario INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+   Nombre CHAR(50), 
+   Nick CHAR(60) NOT NULL , 
+   Clave CHAR(128) NOT NULL,
+   Tipo char(1) default 0,
+   Codigo int not null
+) ENGINE = MYISAM;
+
+insert into usuario (Nombre, Nick, Clave, Tipo) VALUES ('Juan Perez', 'juan', md5('112233'), 'D');
+insert into usuario (Nombre, Nick, Clave, Tipo) VALUES ('Luis Paez', 'luchop', md5('123456Abc'), 'A');
+
+CREATE TABLE IF NOT EXISTS valores (
+   Clave CHAR(20) NOT NULL PRIMARY KEY,
+   Numero INT, 
+   Texto CHAR(100) 
+) ENGINE = MYISAM;

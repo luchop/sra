@@ -1,0 +1,80 @@
+<?php
+
+class Modelo_tarea extends Model {
+
+    //nombre de la tabla
+    private $Tabla = 'tarea';
+
+    function Modelo_tarea() {
+        parent::Model();
+    }
+	
+	function Insert($CodAsignacion, $Fecha, $Descripcion) {
+        $sql = "INSERT INTO $this->Tabla (CodAsignacion, Fecha, Descripcion) 
+				VALUES ($CodAsignacion, '$Fecha', '$Descripcion')";
+        return $this->db->query($sql);
+    }
+	
+	function Busqueda($CodCurso, $CodMateria, $Fecha) {
+        $sql = "SELECT tarea.CodTarea, asignacion.CodCurso, asignacion.CodMateria, tarea.Fecha, 
+				curso.Nombre AS NombreCurso, materia.Nombre AS NombreMateria, tarea.Descripcion
+				FROM tarea, asignacion, curso, materia 
+				WHERE tarea.CodAsignacion=asignacion.CodAsignacion 
+				AND asignacion.CodCurso=curso.CodCurso
+				AND asignacion.CodMateria=materia.CodMateria 
+				AND curso.CodCurso=materia.CodCurso
+				AND (Fecha='$Fecha' OR '$Fecha'='')
+				AND (asignacion.CodCurso='$CodCurso' OR '$CodCurso'='0')
+				AND (asignacion.CodMateria='$CodMateria' OR '$CodMateria'='' OR '$CodMateria'='0')";
+        return $this->db->query($sql);
+    }
+	
+	function Update($CodTarea, $CodAsignacion, $Fecha, $Descripcion) {
+        $sql = "UPDATE $this->Tabla SET CodAsignacion=$CodAsignacion,
+                Fecha='$Fecha', Descripcion='$Descripcion'
+				WHERE CodTarea=$CodTarea";
+        return $this->db->query($sql);
+    }
+	
+	function Delete($CodTarea) {
+		$sql = "DELETE FROM tarea WHERE CodTarea=$CodTarea";
+		$this->db->query($sql);
+	}
+
+    function getFila($CodTarea) {
+        $sql = "SELECT tarea.*, asignacion.CodCurso, asignacion.CodMateria, asignacion.CodDocente,
+				curso.Nombre AS NombreCurso, materia.Nombre AS NombreMateria
+				FROM tarea, asignacion, curso, materia
+				WHERE tarea.CodAsignacion=asignacion.CodAsignacion
+				AND asignacion.CodMateria=materia.CodMateria
+				AND curso.CodCurso=materia.CodCurso
+				AND tarea.CodTarea=$CodTarea";
+        return $this->db->query($sql)->row();
+    }
+	
+	function TablaTareas($CodCurso, $Fecha) {
+		$sql = "SELECT materia.CodMateria, materia.Nombre AS NombreMateria, Descripcion
+				FROM tarea, materia, asignacion
+				WHERE tarea.CodAsignacion=asignacion.CodAsignacion
+				AND materia.CodMateria=asignacion.CodMateria
+				AND asignacion.CodCurso=$CodCurso
+				AND tarea.Fecha='$Fecha'
+				ORDER BY materia.Orden";
+	echo $sql;
+		return $this->db->query($sql);
+	}
+	
+	function UltimaFechaTarea($CodCurso) {
+		$sql = "SELECT MAX(Fecha) AS UltimaFecha FROM tarea, asignacion
+				WHERE tarea.CodAsignacion=asignacion.CodAsignacion
+				AND asignacion.CodCurso=$CodCurso";
+				$query = $this->db->query($sql);
+		if( $query->num_rows()>0 ) {
+			$row = $query->row();
+			return $row->UltimaFecha;
+		} else
+			return '';
+	}
+}
+
+?>

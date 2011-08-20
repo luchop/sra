@@ -1,0 +1,71 @@
+<?php
+class Modelo_reporte extends CI_Model {
+
+    //nombre de la tabla
+    private $Tabla = 'ot';
+
+	private $CodInstitucion;
+
+    function __construct() {
+        parent::__construct();
+		$this->CodInstitucion=0;
+    }
+
+	function SetCodInstitucion($CodInstitucion){
+		$this->CodInstitucion=$CodInstitucion;
+	}
+	
+	function GetOT($Desde,$Hasta,$CodEstado,$CodCliente='') {
+		if ($Hasta=='')
+			$Hasta = $this->funciones->FechaParaMySQL(date('d/m/Y'));
+
+		if ($Desde=='')
+			$WhereFechas="date($this->Tabla.Fecha) <= date('$Hasta') ";
+		else
+			$WhereFechas="date($this->Tabla.Fecha) BETWEEN date('$Desde') AND date('$Hasta') ";	
+        $sql = "SELECT ot.*, cliente.Nombre AS NombreCliente,
+				articulo.Nombre AS NombreArticulo,
+				marca.Nombre AS NombreMarca,
+				modelo.Nombre AS NombreModelo,
+				estado.Nombre AS NombreEstado
+				FROM ot
+				INNER JOIN cliente ON ot.CodCliente=cliente.CodCliente
+				LEFT JOIN articulo ON ot.CodArticulo=articulo.CodArticulo
+				LEFT JOIN marca ON ot.CodMarca=marca.CodMarca
+				LEFT JOIN modelo ON ot.CodModelo=modelo.CodModelo
+				LEFT JOIN estado ON ot.CodEstado=estado.CodEstado
+				where $WhereFechas 
+				and ($this->Tabla.CodEstado='$CodEstado' OR '$CodEstado'='' )
+				and ($this->Tabla.CodCliente='$CodCliente' OR '$CodCliente'='' )
+				and $this->Tabla.CodInstitucion=$this->CodInstitucion ";
+		return $this->db->query($sql);
+	}
+	
+	function GetOT($Desde,$Hasta,$CodEstado,$CodUsuario='') {
+		if ($Hasta=='')
+			$Hasta = $this->funciones->FechaParaMySQL(date('d/m/Y'));
+
+		if ($Desde=='')
+			$WhereFechas="date($this->Tabla.Fecha) <= date('$Hasta') ";
+		else
+			$WhereFechas="date($this->Tabla.Fecha) BETWEEN date('$Desde') AND date('$Hasta') ";	
+        $sql = "SELECT ot.*, cliente.Nombre AS NombreCliente,
+				articulo.Nombre AS NombreArticulo,
+				marca.Nombre AS NombreMarca,
+				modelo.Nombre AS NombreModelo,
+				estado.Nombre AS NombreEstado
+				FROM ot
+				INNER JOIN cliente ON ot.CodCliente=cliente.CodCliente
+				LEFT JOIN articulo ON ot.CodArticulo=articulo.CodArticulo
+				LEFT JOIN marca ON ot.CodMarca=marca.CodMarca
+				LEFT JOIN modelo ON ot.CodModelo=modelo.CodModelo
+				LEFT JOIN estado ON ot.CodEstado=estado.CodEstado
+				where $WhereFechas 
+				and ($this->Tabla.CodEstado='$CodEstado' OR '$CodEstado'='' )
+				and ($this->Tabla.CodCliente='$CodCliente' OR '$CodCliente'='' )
+				and $this->Tabla.CodInstitucion=$this->CodInstitucion ";
+		return $this->db->query($sql);
+	}
+	
+}
+?>

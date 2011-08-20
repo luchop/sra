@@ -1,0 +1,141 @@
+<?php
+
+class Reporte extends CI_Controller {
+
+    private $Menu;
+	
+	function __construct() {
+        parent::__construct();
+		$this->load->library('fpdf');
+		define('FPDF_FONTPATH',$this->config->item('fonts_path'));
+
+        $this->load->model('modelo_reporte', '', TRUE);
+        $this->load->model('modelo_estado', '', TRUE);
+        $this->load->model('modelo_cliente', '', TRUE);
+		$this->load->model('modelo_articulo', '', TRUE);
+		$this->load->model('modelo_usuario', '', TRUE);
+		$this->load->model('modelo_valores', '', TRUE);
+
+		$CodInstitucion=$this->session->userdata('CodInstitucion');
+		$this->modelo_reporte->SetCodInstitucion($CodInstitucion);
+		$this->modelo_articulo->SetCodInstitucion($CodInstitucion);
+		$this->modelo_cliente->SetCodInstitucion($CodInstitucion);
+		$this->modelo_valores->SetCodInstitucion($CodInstitucion);
+		
+		$TipoUsuario = $this->session->userdata('TipoUsuario');
+		$this->Menu = $this->funciones->ObtieneVista($TipoUsuario);
+    }
+
+    function Index() {
+        $data['TituloPagina'] = 'Reporte';
+        $data['Titulo'] = 'Reporte';            
+        $data['VistaPrincipal'] = 'vista_consulta_reporte';		
+		$data['ListaEstados']=$this->modelo_estado->ComboEstado(set_value('Estado'));
+        $this->load->view('vista_maestra', $data);
+    }
+	
+	function GeneraReporteCliente(){
+		$data['Desde'] = $this->funciones->FechaParaMySQL($this->input->post('Desde'));
+		$data['Hasta'] = $this->funciones->FechaParaMySQL($this->input->post('Hasta'));
+		$data['Estado'] = $this->input->post('CodEstado');
+		$data['IncluirObs'] = $this->input->post('Obs');
+		$data['NombreCliente'] = $this->modelo_cliente->NombreCliente($this->input->post('CodCliente'));
+		$data['Tabla'] = $this->modelo_reporte->GetOT($data['Desde'], $data['Hasta'], $data['Estado'], $this->input->post('CodCliente'));
+		$this->output->set_header('Content: application/pdf');
+		$this->load->view('vista_reporte_cliente_pdf', $data);
+	}
+	
+	function ReportePorCliente(){
+		$this->form_validation->set_rules('CodCliente', 'cliente', 'required|xss_clean');
+		$data['VistaMenu'] = $this->Menu;
+		if( $this->form_validation->run() )
+			$this->GeneraReporteCliente();
+		else {
+			$data['VistaPrincipal'] = 'vista_config_reporte_cliente';
+			$data['ListaEstados']=$this->modelo_estado->ComboEstado($this->input->post('CodEstado'));
+			$data['ListaClientes']=$this->modelo_cliente->ComboCliente($this->input->post('CodCliente'));
+			$this->load->view('vista_maestra', $data);
+		}
+	}
+	
+	function GeneraReporteFechas(){
+		$data['Desde'] = $this->funciones->FechaParaMySQL($this->input->post('Desde'));
+		$data['Hasta'] = $this->funciones->FechaParaMySQL($this->input->post('Hasta'));
+		$data['Estado'] = $this->input->post('CodEstado');
+		$data['IncluirObs'] = $this->input->post('Obs');
+		$data['Tabla'] = $this->modelo_reporte->GetOT($data['Desde'], $data['Hasta'], $data['Estado']);
+		$this->output->set_header('Content: application/pdf');
+		$this->load->view('vista_reporte_fechas_pdf', $data);
+	}
+
+	function ReportePorFechas(){
+		$this->form_validation->set_rules('Desde', 'fecha inicial', 'xss_clean');
+		$data['VistaMenu'] = $this->Menu;
+		if( $this->form_validation->run() )
+			$this->GeneraReporteFechas();
+		else {
+			$data['VistaPrincipal'] = 'vista_config_reporte_fechas';
+			$data['ListaEstados']=$this->modelo_estado->ComboEstado($this->input->post('CodEstado'));
+			$this->load->view('vista_maestra', $data);
+		}
+	}
+
+	function GeneraReporteUsuario(){
+		$data['Desde'] = $this->funciones->FechaParaMySQL($this->input->post('Desde'));
+		$data['Hasta'] = $this->funciones->FechaParaMySQL($this->input->post('Hasta'));
+		$data['Estado'] = $this->input->post('CodEstado');
+		$data['IncluirObs'] = $this->input->post('Obs');
+		$data['NombreUsuario'] = $this->modelo_usuario->NombreUsuario($this->input->post('CodUsuario'));
+		$data['Tabla'] = $this->modelo_reporte->GetOTUsuario($data['Desde'], $data['Hasta'], $data['Estado'], $this->input->post('CodUsuario'));
+		$this->output->set_header('Content: application/pdf');
+		$this->load->view('vista_reporte_usuario_pdf', $data);
+	}
+	
+	function ReportePorUsuario(){
+		$this->form_validation->set_rules('CodUsuario', 'usuario', 'required|xss_clean');
+		$data['VistaMenu'] = $this->Menu;
+		if( $this->form_validation->run() )
+			$this->GeneraReporteUsuario();
+		else {
+			$data['VistaPrincipal'] = 'vista_config_reporte_usuario';
+			$data['ListaEstados']=$this->modelo_estado->ComboEstado($this->input->post('CodEstado'));
+			$data['ListaUsuarios']=$this->modelo_usuario->ComboUsuarios($this->session->userdata('CodInstitucion'));
+			$this->load->view('vista_maestra', $data);
+		}
+	}
+	
+	function Comprobante(){
+		$this->form_validation->set_rules('Cliente', 'cliente', 'xss_clean');
+		$this->form_validation->set_rules('Fecha', 'fecha', 'xss_clean');		
+		
+        $data['VistaMenu'] = $this->Menu;
+		$data['Fecha'] = date('d/m/Y');
+		
+        if ($this->form_validation->run()) {
+			$Fecha = $this->funciones->FechaParaMySQL($this->input->post('Fecha'));//CodCliente CodArticulo CodMarca CodModelo Fecha Precio Notas
+			$data['Fecha']=$Fecha;
+			$data['CodCliente']=$this->modelo_cliente->GetNombre($this->input->post('CodCliente'));
+			$data['CodArticulo']=$this->modelo_articulo->GetNombre($this->input->post('CodArticulo'));
+			$this->modelo_articulo->SeTabla('marca');
+			$data['CodMarca']=$this->modelo_articulo->GetNombre($this->input->post('CodMarca'));
+			//$data['CodMarca']=$this->modelo_ot->GetMarcaNombre($this->input->post('CodMarca'));
+			$this->modelo_articulo->SeTabla('modelo');
+			$data['CodModelo']=$this->modelo_articulo->GetNombre($this->input->post('CodModelo'));
+			//$data['CodModelo']=$this->modelo_ot->GetModeloNombre($this->input->post('CodModelo'));
+			$this->output->set_header('Content: application/pdf');
+			$this->load->view('vista_comprobante_pdf', $data);
+        } else {
+			$data['ComboClientes'] = $this->modelo_cliente->ComboCliente($this->input->post('CodCliente'),1);
+			$data['ComboArticulos'] = $this->modelo_articulo->ComboArticulo($this->input->post('CodArticulo'));
+			$this->modelo_articulo->SetTabla('marca');
+			$data['ComboMarca']=$this->modelo_articulo->GetCombo($this->input->post('CodMarca'));
+			//$data['ComboMarca'] = $this->modelo_ot->ComboMarca($this->input->post('CodMarca'));
+			//$data['ComboModelos'] = $this->modelo_ot->ComboModelo($this->input->post('CodModelo'));
+			$this->modelo_articulo->SetTabla('modelo');
+			$data['ComboModelos']=$this->modelo_articulo->GetCombo($this->input->post('CodModelo'));
+            $data['VistaPrincipal'] = 'vista_comprobante_ot';
+			$this->load->view('vista_maestra', $data);
+        }
+	}
+}
+?>

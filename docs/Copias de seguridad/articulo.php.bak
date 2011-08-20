@@ -1,0 +1,91 @@
+<?php
+
+class Articulo extends CI_Controller {
+
+	private $PuedeModificar;
+	private $TipoUsuario;
+	
+    function __construct() {
+        parent::__construct();
+        $this->load->model('modelo_articulo', '', TRUE);
+		$this->form_validation->set_error_delimiters('<div class="error">', '</div>');
+		echo "codintitucion:".$this->session->userdata('CodInstitucion');
+		$this->modelo_articulo->SetCodInstitucion($this->session->userdata('CodInstitucion'));
+		
+		$this->TipoUsuario = $this->session->userdata('TipoUsuario');
+		if( $this->TipoUsuario==1 ) 
+			$this->PuedeModificar = 1;
+		else if( $this->TipoUsuario==2 ) 
+			$this->PuedeModificar = 1;
+		else if( $this->TipoUsuario==3 ) 
+			$this->PuedeModificar = 0;
+    }
+
+    function Index() {
+        $data['VistaPrincipal'] = 'vista_lista_articulos';
+        $this->load->view('vista_maestra', $data);
+    }
+	
+    function NuevoArticulo() {
+        $this->form_validation->set_rules('Nombre', '"nombre"', 'required|min_length[3]|xss_clean|callback_NombreUnico');
+		if ($this->form_validation->run()) 
+            $this->modelo_articulo->Insert($this->input->post('Nombre'));
+		$this->ListaArticulos();
+    }
+
+    function ListaArticulos() {
+        $registros = $this->modelo_articulo->Busqueda();
+		$this->load->library('table');
+        $this->table->set_empty("&nbsp;");
+		if( $this->PuedeModificar==1 )
+			$this->table->set_heading('No.', 'Nombre del art&iacute;culo', 'Acci&oacute;n');
+		else
+			$this->table->set_heading('No.', 'Nombre del art&iacute;culo');
+        $aux = array('table_open' => '<table class="tablaseleccion">');
+        $this->table->set_template($aux);
+        $i = 0;
+        foreach ($registros->result() as $registro)
+			if( $this->PuedeModificar==1 )
+                $this->table->add_row(++$i, form_open('articulo/ModificaArticulo',array('id'=>'form_'.$registro->CodArticulo)).form_input('Nombre',$registro->Nombre).form_hidden('CodArticulo',$registro->CodArticulo).'</form>', 
+                        '<a href="javascript:void(0)" class="actualiza" onclick="$(\'#form_'.$registro->CodArticulo.'\').submit()">Modificar</a> '.
+                        anchor('articulo/BorrarArticulo/' . $registro->CodArticulo, 'Eliminar', array('class'=>'elimina','onclick'=>"return confirm('Realmente desea borrar este registro?')")));
+			else
+				$this->table->add_row(++$i, $registro->Nombre);
+
+		if( $this->TipoUsuario==1 ) 
+			$data['VistaMenu'] = 'vista_menu_admin';
+		else if( $this->TipoUsuario==2 ) 
+			$data['VistaMenu'] = 'vista_menu_operador1';
+		else if( $this->TipoUsuario==3 ) 
+			$data['VistaMenu'] = 'vista_menu_operador2';
+		$data['Tabla'] = $this->table->generate();
+        $data['Vista'] = 'vista_busca_articulo';
+        $data['VistaPrincipal'] = 'vista_lista_articulos';
+        //$data['PuedeModificar'] = $this->PuedeModificar;
+        $this->load->view('vista_maestra', $data);
+    }
+
+    function ModificaArticulo() {
+        $this->form_validation->set_rules('Nombre', '"nombre"', 'required|min_length[3]|xss_clean');
+        if ($this->form_validation->run()) {
+				$this->modelo_articulo->Update($this->input->post('CodArticulo'),$this->input->post('Nombre'));
+        }
+		redirect('articulo/ListaArticulos','refresh');
+    }
+
+    function BorrarArticulo($CodArticulo) {
+        $this->modelo_articulo->Delete($CodArticulo);
+        redirect('articulo/ListaArticulos','refresh');
+    }
+
+	function NombreUnico($Nombre){
+		if ($this->modelo_articulo->ExisteNombre($Nombre)){
+			$this->form_validation->set_message('NombreUnico', 'Este nombre ya fue registrado.');
+			return FALSE;
+		}else{
+			return TRUE;
+		}
+	}
+}
+
+?>

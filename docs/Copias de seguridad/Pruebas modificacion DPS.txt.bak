@@ -1,0 +1,36 @@
+Primaria:
+---------
+Registra en CTW. 3ro. primaria - activ.manuales - 3er parcial, 5to parcial
+notas
+   30 ... ./
+Registra en CTW. 3ro. primaria - activ.manuales - 4to parcial
+notas:
+   34  37  41
+   29  33  31
+
+no debe guardar en tabla nota
+
+debe aparecer promediadas en sistema web (ultima columna)
+  37
+  31
+  
+despues de cerrar registro debe reflejarse en boletin CTW
+
+Secundaria:
+-----------
+Registra en CTW. 3ro. de secundaria A filosofia - 3er parcial, 5to parcial
+Registra en CTW. 3ro. de secundaria A filosofia - 4to parcial
+notas:
+   9  4  6  ./
+      6  8  ./
+
+SI debe guardar en tabla nota  ./
+   6
+   7   
+   
+debe reflejarse en boletin CTW y en sistema web  ./
+
+
+  
+  
+   
