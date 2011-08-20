@@ -5,8 +5,8 @@ CREATE TABLE IF NOT EXISTS sala (
   Descripcion char(100) NOT NULL,
   Capacidad int DEFAULT '0' NOT NULL,
   CorreoAdministrador char(60) NOT NULL,
-  Activo smallInt default 1,
-  Orden INT DEFAULT '0' NOT NULL,
+  Activo tinyint default 1,
+  Orden smallInt DEFAULT '0',
   CodInstitucion integer not null
 ) engine=MyISAM;
 
@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS grupo (
   CodGrupo int NOT NULL primary key auto_increment,
   Nombre char(50) NOT NULL,
   CorreoAdministrador char(60) NOT NULL,
-  Activo smallInt default 1,
+  Activo tinyint default 1,
   CodInstitucion integer not null
 ) engine=MyISAM;
 
@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS reserva (
 	CodSala int DEFAULT '1' NOT NULL,
 	CodUsuario int DEFAULT '1' NOT NULL,
 	Nombre varchar(80) DEFAULT '' NOT NULL,
-	Descripcion text,
+	Descripcion char(255),
 	Estado tinyint unsigned NOT NULL DEFAULT 1,
 	CodInstitucion integer not null
 ) engine=MyISAM;
@@ -35,13 +35,13 @@ CREATE TABLE IF NOT EXISTS repeticion (
 	CodRepeticion int NOT NULL primary key auto_increment,
 	HoraInicio int DEFAULT '0' NOT NULL,
 	HoraFin int DEFAULT '0' NOT NULL,
-	DiaCompleto int DEFAULT '0' NOT NULL,
+	DiaCompleto tinyint DEFAULT '0' NOT NULL,
 	FechaFinal int DEFAULT '0' NOT NULL,
-	DiasSemana  char(7) DEFAULT '' NOT NULL,
-	CodSala int DEFAULT '1' NOT NULL,
-	CodUsuario int DEFAULT '1' NOT NULL,
+	DiasSemana  char(7) DEFAULT '0000000' NOT NULL,
+	CodSala int DEFAULT '0' NOT NULL,
+	CodUsuario int DEFAULT '0' NOT NULL,
 	Nombre varchar(80) DEFAULT '' NOT NULL,
-	Descripcion text,
+	Descripcion char(255),
 	PeriodoRepeticion char(1), 
 	Estado tinyint unsigned NOT NULL DEFAULT 1,
 	CodInstitucion integer not null
@@ -49,10 +49,11 @@ CREATE TABLE IF NOT EXISTS repeticion (
 
 
 create table valores (
-  Clave CHAR(20) not null primary key,
+  Clave CHAR(20) not null,
   Numero int default -1,
   Texto CHAR(100) default '',
-  CodInstitucion integer not null
+  CodInstitucion integer not null,
+  primary key (Clave, CodInstitucion)
 );
 
 create table IF NOT EXISTS institucion (
@@ -63,7 +64,7 @@ create table IF NOT EXISTS institucion (
 	CodPais INTEGER not null,
 	SitioWeb char(60),
 	Telefono char(20),
-	Activo smallInt default 1,
+	Activo tinyint default 1,
 	Notas char(255)
 ) engine=MyISAM; 
 
@@ -73,7 +74,7 @@ create table IF NOT EXISTS usuario (
 	Correo char(60) not null,
 	Nick char(12) not null,
 	Clave char(32) not null,
-	Activo smallInt default 1,
+	Activo tinyint default 1,
 	TipoUsuario char(2) not null,
 	CodInstitucion integer not null
 ) engine=MyISAM; 
