@@ -1,2 +1,0 @@
-<h2 class="centro">Lista de <?php echo ($EsCliente==1) ? 'clientes' : 'proveedores' ?></h2>
-<?php echo $Tabla; ?>

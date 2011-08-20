@@ -1,9 +1,0 @@
-<?php
-echo "<br /><br /><br /><hr />";
-echo "<h1 class='centro'>Bolet&iacute;n de calificaciones</h1><br />";
-
-echo $TablaNotas;
-echo "<br /><br />";
-
-echo "<br /><p class='centro'><a href='#'>Generar boletin en PDF</a></p>";
-?>
