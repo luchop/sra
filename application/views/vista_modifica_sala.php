@@ -14,8 +14,8 @@ echo form_open('sala/ModificaSala',  array('id' => 'Sala', 'name' => 'Sala'));
 <label for='Nombre'>Nombre *</label>
 <input type='text' id='Nombre' name='Nombre' size='40' maxlength='50' class='required' value='<?php echo $Fila->Nombre; ?>' /><br />
 
-<label for='Descripcion'>Descripci&oacute;n *</label>
-<input type='text' id='Descripcion' name='Descripcion' size='40' maxlength='50' class='required' value='<?php echo $Fila->Descripcion; ?>' /><br />
+<label for='Descripcion'>Descripci&oacute;n</label>
+<input type='text' id='Descripcion' name='Descripcion' size='40' maxlength='50' value='<?php echo $Fila->Descripcion; ?>' /><br />
 
 <label for='CodGrupo'>Grupo *</label>
 <?php echo $ComboGrupos; ?><br />
@@ -23,15 +23,12 @@ echo form_open('sala/ModificaSala',  array('id' => 'Sala', 'name' => 'Sala'));
 <label for='Capacidad'>Capacidad *</label>
 <input type='text' id='Capacidad' name='Capacidad' size='5' maxlength='5' class='required' value='<?php echo $Fila->Capacidad; ?>' /><br />
 
-<label for='Correo'>Correo electr&oacute;nico *</label>
-<input type='text' id='Correo' name='Correo' size='40' maxlength='60' class='required email' value='<?php echo $Fila->CorreoAdministrador; ?>' />
+<label for='Correo'>Correo electr&oacute;nico</label>
+<input type='text' id='Correo' name='Correo' size='40' maxlength='60' value='<?php echo $Fila->CorreoAdministrador; ?>' />
 <?php echo '<br />'.form_error('Correo'); ?>
 
 <label for='Activo'>Activo</label>
 <input type='checkbox' id='Activo' name='Activo' <?php echo ($Fila->Activo==1?'checked':''); ?> /><br />
-
-<label for='Orden'>Orden *</label>
-<input type='text' id='Orden' name='Orden' size='4' maxlength='4' class='required' value='<?php echo $Fila->Orden; ?>' /><br />
 
 <button class='button positive' style='margin-left:180px;' name='submit' value='Guardar'> 
 	<img src='<?php echo base_url();?>bt/images/icons/tick.png' alt='Graba las modificaciones' /> Guardar

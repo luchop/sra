@@ -15,8 +15,8 @@ echo form_open('grupo/ModificaGrupo',  array('id' => 'Grupo', 'name' => 'Grupo')
 <label for='Nombre'>Nombre *</label>
 <input type='text' id='Nombre' name='Nombre' size='40' maxlength='50' class='required' value='<?php echo $Fila->Nombre; ?>' /><br />
 
-<label for='Correo'>Correo electr&oacute;nico *</label>
-<input type='text' id='Correo' name='Correo' size='40' maxlength='60' class='required email' value='<?php echo $Fila->CorreoAdministrador; ?>' />
+<label for='Correo'>Correo electr&oacute;nico</label>
+<input type='text' id='Correo' name='Correo' size='40' maxlength='60' value='<?php echo $Fila->CorreoAdministrador; ?>' />
 <?php echo '<br />'.form_error('Correo'); ?>
 
 <label for='Activo'>Activo</label>
