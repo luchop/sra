@@ -172,8 +172,8 @@ class Reserva extends CI_Controller {
 				<input type='checkbox' name='DiasSemana_1' id='DiasSemana_1' ".(($Dias{0}=='1')? "checked='checked'":'')." value='1' /> Lunes &nbsp;&nbsp;&nbsp;
 				<input type='checkbox' name='DiasSemana_2' id='DiasSemana_2' ".(($Dias{1}=='1')? "checked='checked'":'')." value='1' /> Martes &nbsp;&nbsp;&nbsp;
 				<input type='checkbox' name='DiasSemana_3' id='DiasSemana_3' ".(($Dias{2}=='1')? "checked='checked'":'')." value='1' /> Miercoles <br />
-				<input type='checkbox' name='DiasSemana_4' id='DiasSemana_4' ".(($Dias{3}=='1')? "checked='checked'":'')." value='1' /> Jueves &nbsp;&nbsp;&nbsp;
-				<input type='checkbox' name='DiasSemana_5' id='DiasSemana_5' ".(($Dias{4}=='1')? "checked='checked'":'')." value='1' /> Viernes &nbsp;&nbsp;&nbsp;
+				<input type='checkbox' name='DiasSemana_4' id='DiasSemana_4' ".(($Dias{3}=='1')? "checked='checked'":'')." value='1' /> Jueves &nbsp;&nbsp;
+				<input type='checkbox' name='DiasSemana_5' id='DiasSemana_5' ".(($Dias{4}=='1')? "checked='checked'":'')." value='1' /> Viernes &nbsp;
 				<input type='checkbox' name='DiasSemana_6' id='DiasSemana_6' ".(($Dias{5}=='1')? "checked='checked'":'')." value='1' /> Sabado <br />
 				<input type='checkbox' name='DiasSemana_7' id='DiasSemana_7' ".(($Dias{6}=='1')? "checked='checked'":'')." value='1' /> Domingo <br />
 				</div>";

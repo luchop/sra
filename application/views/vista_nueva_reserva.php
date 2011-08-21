@@ -3,12 +3,17 @@ $(document).ready(function() {
 	$("#Reserva").validate();
 
     $("input[name$='Repeticion']").click(function() {
-        var test = $(this).val();
-        if(test=='N')
+        var tipo = $(this).val();
+        if(tipo=='N')
 			$("#DivRepeticion").slideUp();
 		else
 			$("#DivRepeticion").slideDown();
     }); 
+	
+	$("#HoraInicio").change(function() {
+		var hora = parseInt($(this).val())+3600;
+		$("#HoraFin").val(hora);
+	});
 });
 
 </script>
