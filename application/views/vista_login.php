@@ -11,7 +11,7 @@ echo "<div style='background-image:url(".base_url()."imagenes/borde.jpg); backgr
 	if( isset($Error) ) echo "<em>$Error</em><br />";
 	echo "Nombre de usuario<br />
 	<input type='text' id='Nick' name='Nick' size='15' class='required' minlength='3' /><br /><br />
-	Contrase&ntilde;a<br />
+	Contrase&ntilde;a&nbsp;&nbsp;&nbsp;(<a href='#'>Olvid&eacute; mi contrase&ntilde;a</a>)<br />
 	<input type='password' id='Clave' name='Clave' size='15' class='required' minlength='6' /><br /><br />
 	
 	<button class='button positive' style='margin-left:80px;'> 

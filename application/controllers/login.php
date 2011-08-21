@@ -5,7 +5,7 @@ class Login extends CI_Controller {
     function __construct() {
         parent::__construct();
 		$this->load->model('modelo_usuario', '', true);
-		$this->session->set_userdata('CodInstitucion', 14);
+		$this->session->set_userdata('CodInstitucion', 2);
     }
 
 	function Index() {

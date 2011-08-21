@@ -12,7 +12,7 @@
         //header("Pragma: no-cache");
         //------------------------
             
-		echo "<title>Ordenes de trabajo</title>";
+		echo "<title>SRA: Reserva de ambientes</title>";
 
         
 		echo "<script type='text/javascript' language='javascript' src='".base_url()."scripts/jquery.dropdownPlain.js'></script>";

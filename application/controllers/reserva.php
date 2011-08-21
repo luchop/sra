@@ -154,22 +154,29 @@ class Reserva extends CI_Controller {
         redirect('reserva','refresh');
     }
 	
-	function TiposRepeticion($Tipo='N'){
+	/*function TiposRepeticion($Tipo='N'){
 		return " <input type='radio' name='Repeticion' id='Repeticion' ".(($Tipo=='N')? "checked='checked'":'')." value='N' /> Ninguna <br />
 				<label>&nbsp;</label><input type='radio' name='Repeticion' id='Repeticion' ".(($Tipo=='D')? "checked='checked'":'')." value='D' /> Diaria <br />
 				<label>&nbsp;</label><input type='radio' name='Repeticion' id='Repeticion' ".(($Tipo=='S')? "checked='checked'":'')." value='S' /> Semanal <br />
 				<label>&nbsp;</label><input type='radio' name='Repeticion' id='Repeticion' ".(($Tipo=='M')? "checked='checked'":'')." value='M' /> Mensual <br />";
+	}*/
+	function TiposRepeticion($Tipo='N'){
+		return " <input type='radio' name='Repeticion' id='Repeticion' ".(($Tipo=='N')? "checked='checked'":'')." value='N' /> Ninguna &nbsp;&nbsp;&nbsp;
+				<input type='radio' name='Repeticion' id='Repeticion' ".(($Tipo=='D')? "checked='checked'":'')." value='D' /> Diaria &nbsp;&nbsp;&nbsp;
+				<input type='radio' name='Repeticion' id='Repeticion' ".(($Tipo=='S')? "checked='checked'":'')." value='S' /> Semanal &nbsp;&nbsp;&nbsp;
+				<input type='radio' name='Repeticion' id='Repeticion' ".(($Tipo=='M')? "checked='checked'":'')." value='M' /> Mensual <br />";
 	}
 	
 	function DiasSemana($Dias='0000000'){
-		return " <input type='checkbox' name='DiasSemana_1' id='DiasSemana_1' ".(($Dias{0}=='1')? "checked='checked'":'')." value='1' /> Lunes <br />
-				<label>&nbsp;</label><input type='checkbox' name='DiasSemana_2' id='DiasSemana_2' ".(($Dias{1}=='1')? "checked='checked'":'')." value='1' /> Martes <br />
-				<label>&nbsp;</label><input type='checkbox' name='DiasSemana_3' id='DiasSemana_3' ".(($Dias{2}=='1')? "checked='checked'":'')." value='1' /> Miercoles <br />
-				<label>&nbsp;</label><input type='checkbox' name='DiasSemana_4' id='DiasSemana_4' ".(($Dias{3}=='1')? "checked='checked'":'')." value='1' /> Jueves <br />
-				<label>&nbsp;</label><input type='checkbox' name='DiasSemana_5' id='DiasSemana_5' ".(($Dias{4}=='1')? "checked='checked'":'')." value='1' /> Viernes <br />
-				<label>&nbsp;</label><input type='checkbox' name='DiasSemana_6' id='DiasSemana_6' ".(($Dias{5}=='1')? "checked='checked'":'')." value='1' /> Sabado <br />
-				<label>&nbsp;</label><input type='checkbox' name='DiasSemana_7' id='DiasSemana_7' ".(($Dias{6}=='1')? "checked='checked'":'')." value='1' /> Domingo <br />
-				";
+		return "<div style='margin-left:150px;'>
+				<input type='checkbox' name='DiasSemana_1' id='DiasSemana_1' ".(($Dias{0}=='1')? "checked='checked'":'')." value='1' /> Lunes &nbsp;&nbsp;&nbsp;
+				<input type='checkbox' name='DiasSemana_2' id='DiasSemana_2' ".(($Dias{1}=='1')? "checked='checked'":'')." value='1' /> Martes &nbsp;&nbsp;&nbsp;
+				<input type='checkbox' name='DiasSemana_3' id='DiasSemana_3' ".(($Dias{2}=='1')? "checked='checked'":'')." value='1' /> Miercoles <br />
+				<input type='checkbox' name='DiasSemana_4' id='DiasSemana_4' ".(($Dias{3}=='1')? "checked='checked'":'')." value='1' /> Jueves &nbsp;&nbsp;&nbsp;
+				<input type='checkbox' name='DiasSemana_5' id='DiasSemana_5' ".(($Dias{4}=='1')? "checked='checked'":'')." value='1' /> Viernes &nbsp;&nbsp;&nbsp;
+				<input type='checkbox' name='DiasSemana_6' id='DiasSemana_6' ".(($Dias{5}=='1')? "checked='checked'":'')." value='1' /> Sabado <br />
+				<input type='checkbox' name='DiasSemana_7' id='DiasSemana_7' ".(($Dias{6}=='1')? "checked='checked'":'')." value='1' /> Domingo <br />
+				</div>";
 	}
 
 	function ComboHoras($Hora='',$Minuto=''){

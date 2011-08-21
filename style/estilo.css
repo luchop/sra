@@ -2,7 +2,7 @@ body {
   background-image:url(../imagenes/rayas.png);
 }
 
-div#formulario label, div#formulario input{
+div#formulario label, div#formulario input:not([type="radio"]):not([type="checkbox"]) {
      display: block;
      float: left;
      margin-bottom: 10px;

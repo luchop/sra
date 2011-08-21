@@ -50,6 +50,12 @@ class Modelo_usuario extends CI_Model {
                 WHERE CodUsuario=$CodUsuario";
         return $this->db->query($sql);
     }
+	
+	function UpdateClave($Correo, $Clave) {
+		$sql = "UPDATE $this->Tabla SET Clave=MD5('$Clave')
+                WHERE Correo=$Correo";
+        return $this->db->query($sql);
+    }
 
     function Busqueda($Nombre, $Nick, $CodInstitucion) {
         $sql = "select * from $this->Tabla where 
@@ -71,7 +77,7 @@ class Modelo_usuario extends CI_Model {
     }
     
     function BuscarUsuario($Usuario){
-        $sql = "SELECT * FROM usuario
+        $sql = "SELECT * FROM $this->Tabla
                 WHERE Nombres LIKE('%$Usuario%')
                 OR Apellidos LIKE('%$Usuario%')
                 ORDER BY Nombres, Apellidos";
@@ -80,7 +86,7 @@ class Modelo_usuario extends CI_Model {
     }
     
     function NombreUsuario($CodUsuario) {
-        $sql = "select * FROM usuario WHERE CodUsuario=$CodUsuario";
+        $sql = "select * FROM $this->Tabla WHERE CodUsuario=$CodUsuario";
         $query = $this->db->query($sql);
         if($query->num_rows()>0) {
             $row = $query->row();

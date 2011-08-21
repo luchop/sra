@@ -177,6 +177,15 @@ class Usuario extends CI_Controller {
 			return TRUE;
 	}
 	
+	function CorreoExiste($Correo) {
+		if( $this->modelo_usuario->ExisteCorreo($Correo) )			
+			return TRUE;
+		else {
+			$this->form_validation->set_message('CorreoExiste', 'Este correo no se encuentra registrado en nuestra base de datos.');
+			return TRUE;
+		}
+	}
+	
 	function NickUnico($Nick) {
 		$CodInstitucion = $this->session->userdata('CodInstitucion');
 		if( $this->modelo_usuario->ExisteNick($Nick, $CodInstitucion) ) {
@@ -187,6 +196,27 @@ class Usuario extends CI_Controller {
 			return TRUE;
 	}
 	
+	function EnviaCorreoCambiaClave($Correo, $Clave) {
+	
+	}
+	
+	function RestablecerClave() {
+		$this->form_validation->set_rules('Correo', 'correo', 'callback_CorreoExiste');
+		
+        $data['VistaMenu'] = 'vista_menu_admin';
+        if ($this->form_validation->run()) {
+			$Clave = $this->modelo_usuario->GeneraClaveUnica();
+			$this->modelo_usuario->UpdateClave($this->input->post('Correo'), $Clave);
+			$msg = 'Tu nueva clave es: $Clave';
+			$this->EnviaCorreoCambiaClave($this->input->post('Correo'), $Clave);
+			$data['Mensaje'] = "Se ha reestablecido su contrase&ntilde;a. Revise su correo, por favor.";			
+			}
+            $data['VistaPrincipal'] = 'vista_mensaje';
+        } else {
+            $data['VistaPrincipal'] = 'vista_restablece_clave';
+        }
+		$this->load->view('vista_maestra', $data);		
+	}
 }
 
 ?>

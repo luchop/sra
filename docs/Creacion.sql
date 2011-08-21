@@ -19,34 +19,33 @@ CREATE TABLE IF NOT EXISTS grupo (
 ) engine=MyISAM;
 
 CREATE TABLE IF NOT EXISTS reserva (
-	CodReserva int NOT NULL primary key auto_increment,
-    HoraInicio int DEFAULT '0' NOT NULL,
-	HoraFin int DEFAULT '0' NOT NULL,
-	CodRepeticion int DEFAULT '0' NOT NULL,
-	CodSala int DEFAULT '1' NOT NULL,
-	CodUsuario int DEFAULT '1' NOT NULL,
-	Nombre varchar(80) DEFAULT '' NOT NULL,
-	Descripcion char(255),
-	Estado tinyint unsigned NOT NULL DEFAULT 1,
-	CodInstitucion integer not null
-) engine=MyISAM;
+	CodReserva INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    HoraInicio INT DEFAULT '0' NOT NULL,
+	HoraFin INT DEFAULT '0' NOT NULL,
+	CodRepeticion INT DEFAULT '0' NOT NULL,
+	CodSala INT DEFAULT '0' NOT NULL,
+	CodUsuario INT DEFAULT '0' NOT NULL,
+	Nombre CHAR(80) DEFAULT '' NOT NULL,
+	Descripcion CHAR(150),
+	Estado TINYINT UNSIGNED NOT NULL DEFAULT 1,
+	CodInstitucion INTEGER NOT NULL
+) ENGINE=MYISAM;
 
 CREATE TABLE IF NOT EXISTS repeticion (
-	CodRepeticion int NOT NULL primary key auto_increment,
-	HoraInicio int DEFAULT '0' NOT NULL,
-	HoraFin int DEFAULT '0' NOT NULL,
-	DiaCompleto tinyint DEFAULT '0' NOT NULL,
-	FechaFinal int DEFAULT '0' NOT NULL,
-	DiasSemana  char(7) DEFAULT '0000000' NOT NULL,
-	CodSala int DEFAULT '0' NOT NULL,
-	CodUsuario int DEFAULT '0' NOT NULL,
-	Nombre varchar(80) DEFAULT '' NOT NULL,
-	Descripcion char(255),
-	PeriodoRepeticion char(1), 
-	Estado tinyint unsigned NOT NULL DEFAULT 1,
-	CodInstitucion integer not null
-) engine=MyISAM;
-
+	CodRepeticion INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+	HoraInicio INT DEFAULT '0' NOT NULL,
+	HoraFin INT DEFAULT '0' NOT NULL,
+	DiaCompleto TINYINT DEFAULT '0' NOT NULL,
+	FechaFinal INT DEFAULT '0' NOT NULL,
+	DiasSemana  CHAR(7) DEFAULT '0000000' NOT NULL,
+	CodSala INT DEFAULT '0' NOT NULL,
+	CodUsuario INT DEFAULT '0' NOT NULL,
+	Nombre CHAR(80) DEFAULT '' NOT NULL,
+	Descripcion CHAR(150),
+	PeriodoRepeticion CHAR(1) NOT NULL, 
+	Estado TINYINT UNSIGNED NOT NULL DEFAULT 1,
+	CodInstitucion INTEGER NOT NULL
+) ENGINE=MYISAM;
 
 create table valores (
   Clave CHAR(20) not null,
@@ -93,5 +92,4 @@ create table IF NOT EXISTS tipo_usuario (
 ) engine=MyISAM; 
 
 insert into tipo_usuario values (1, 'Administrador', 0);
-insert into tipo_usuario values (2, 'Operador 1', 0);
-insert into tipo_usuario values (3, 'Operador 2', 0);
+insert into tipo_usuario values (2, 'Usuario', 0);
