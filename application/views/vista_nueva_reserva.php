@@ -1,6 +1,13 @@
 <script type="text/javascript">
 $(document).ready(function() {
 	$("#Reserva").validate();
+	
+	$("#DiaCompleto").click(function() {
+		if ($(this).is(':checked'))
+			HabilitaHoras(0);
+		else
+			HabilitaHoras(1);
+	});
 
     $("input[name$='Repeticion']").click(function() {
         var tipo = $(this).val();
@@ -15,7 +22,15 @@ $(document).ready(function() {
 		$("#HoraFin").val(hora);
 	});
 });
-
+function HabilitaHoras(tipo){
+	if (tipo==1){
+		$('#HoraInicio').removeAttr('disabled');
+		$('#HoraFin').removeAttr('disabled');
+	} else {
+		$('#HoraInicio').attr('disabled','disabled');
+		$('#HoraFin').attr('disabled','disabled');
+	}
+}
 </script>
 <div id='formulario' class='span-14 prefix-5 suffix-5 last'>
 <fieldset><legend>Nueva reserva</legend>

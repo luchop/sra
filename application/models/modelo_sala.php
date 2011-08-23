@@ -28,10 +28,10 @@ class Modelo_sala extends CI_Model {
         return $this->db->query($sql);
     }
 
-    function Busqueda($Nombre,$Correo) {
+    function Busqueda($Nombre) {
         $sql = "select * from $this->Tabla where 
-                (Nombre like '%$Nombre%' or '$Nombre'='') and 
-                (CorreoAdministrador like '%$Correo%' or '$Correo'='') and
+                ((Nombre like '%$Nombre%' or '$Nombre'='') OR
+                (Descripcion like '%$Nombre%' or '$Nombre'='')) and
 				CodInstitucion=$this->CodInstitucion
                 ORDER BY Orden";
         return $this->db->query($sql);
@@ -62,7 +62,7 @@ class Modelo_sala extends CI_Model {
         $resultado = $this->db->query($sql);
         $s = "<select name='CodSala' id='CodSala'>";
 		if ($Requerido==0)
-			$s .= "<option value=''>-- Seleccione el usuario --</option>";
+			$s .= "<option value=''>-- Seleccione la sala --</option>";
         foreach($resultado->result() as $row) 
             $s .= "<option value=".$row->CodSala.($CodSala==$row->CodSala? ' selected ':'').">".$row->Nombre."</option>";
         return $s."</select>";       

@@ -27,24 +27,29 @@ class Modelo_reserva extends CI_Model {
         $this->db->query($sql);
     }
 	
-	function Update($CodReserva, $Nombre, $Descripcion, $CodGrupo, $Capacidad, $CorreoAdministrador, $Activo, $Orden) {
-		$sql = "UPDATE $this->Tabla SET Nombre='$Nombre', Descripcion='$Descripcion', CodGrupo='$CodGrupo', Capacidad='$Capacidad',
-				CorreoAdministrador='$CorreoAdministrador', Activo=$Activo, Orden='$Orden'
+	function Update($CodReserva, $Nombre, $Descripcion, $Estado, $CodSala, $HoraInicio, $HoraFin, $CodRepeticion) {
+		$sql = "UPDATE $this->Tabla SET Nombre='$Nombre', Descripcion='$Descripcion', Estado='$Estado', CodSala='$CodSala', HoraInicio='$HoraInicio', 
+				HoraFin='$HoraFin', CodRepeticion='$CodRepeticion'
                 WHERE CodReserva=$CodReserva";
         return $this->db->query($sql);
     }
 
-    function Busqueda($Nombre,$Correo) {
-        $sql = "select * from $this->Tabla where 
-                (Nombre like '%$Nombre%' or '$Nombre'='') and 
-                (CorreoAdministrador like '%$Correo%' or '$Correo'='') and
-				CodInstitucion=$this->CodInstitucion
-                ORDER BY Orden";
+    function Busqueda($Nombre,$Descripcion,$Sala) {
+        $sql = "select $this->Tabla.*,sala.Nombre as NombreSala from $this->Tabla 
+				left join sala on $this->Tabla.CodSala=sala.CodSala
+				where 
+                ($this->Tabla.Nombre like '%$Nombre%' or '$Nombre'='') and 
+                ($this->Tabla.Descripcion like '%$Descripcion%' or '$Descripcion'='') and 
+                ($this->Tabla.CodSala = '$Sala' or '$Sala'='') and
+				$this->Tabla.CodInstitucion=$this->CodInstitucion				
+                ORDER BY $this->Tabla.Nombre";
         return $this->db->query($sql);
     }
 
     function getFila($CodReserva) {
-        $sql = "select * from $this->Tabla where CodReserva=$CodReserva";
+        $sql = "select $this->Tabla.*,rep.DiaCompleto,rep.FechaFinal,rep.DiasSemana,rep.PeriodoRepeticion from $this->Tabla
+				left join repeticion rep on $this->Tabla.CodRepeticion=rep.CodRepeticion
+				where $this->Tabla.CodReserva=$CodReserva";
         return $this->db->query($sql)->row();
     }
 

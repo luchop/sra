@@ -18,7 +18,7 @@ class Reserva extends CI_Controller {
 		$this->modelo_reserva->SetCodInstitucion($CodInstitucion);
 		$this->modelo_repeticion->SetCodInstitucion($CodInstitucion);
 		
-		$CodUsuario=0;
+		$CodUsuario=2;
 		$this->modelo_reserva->SetCodUsuario($CodUsuario);
 		$this->modelo_repeticion->SetCodUsuario($CodUsuario);
 		
@@ -69,12 +69,12 @@ class Reserva extends CI_Controller {
 		$this->load->view('vista_maestra', $data);	
     }
 
-    function BuscaParaModificar($Modificacion) {
+    function BuscaParaModificar($Modificacion=0) {
         $this->form_validation->set_rules('Nombre', 'nombre', 'xss_clean');
 		
         $data['VistaMenu'] = 'vista_menu_admin';
         if ($this->form_validation->run()) {
-            $registros = $this->modelo_reserva->Busqueda($this->input->post('Nombre'), $this->input->post('Correo'));
+            $registros = $this->modelo_reserva->Busqueda($this->input->post('Nombre'), $this->input->post('Descripcion'), $this->input->post('CodSala'));
             if( $Modificacion==1 )
                 $Vista = 'vista_modifica_reserva';
             else
@@ -85,14 +85,23 @@ class Reserva extends CI_Controller {
                 $data['VistaPrincipal'] = 'vista_mensaje';
             } else if ($registros->num_rows() == 1) {
 				$data['Fila'] = $registros->row();
+				$data['PeriodoRepeticion']=(!isset($data['Fila']->PeriodoRepeticion) || $data['Fila']->PeriodoRepeticion=='') ? 'N' : $data['Fila']->PeriodoRepeticion;
+				$data['ComboSalas'] = $this->modelo_sala->ComboSalas($data['Fila']->CodSala);
+				$data['Fecha'] = ($data['Fila']->HoraInicio!='') ? date('d/m/Y',$data['Fila']->HoraInicio):date('d/m/Y');
+				$data['FechaFinal'] = ($data['Fila']->FechaFinal!='') ? date('d/m/Y',$data['Fila']->FechaFinal) :date('d/m/Y');
+				$data['ComboHoras_Inicio'] = $this->ComboHoras(date('H',$data['Fila']->HoraInicio),date('i',$data['Fila']->HoraInicio));
+				$data['ComboHoras_Fin'] = $this->ComboHoras(date('H',$data['Fila']->HoraFin),date('i',$data['Fila']->HoraFin));
+				$data['DiasSemana'] = $this->DiasSemana($data['Fila']->DiasSemana);
+				$data['Repeticiones'] = $this->TiposRepeticion($data['PeriodoRepeticion']);
+								
                 $data['VistaPrincipal'] = $Vista;
             } else {
                 $this->load->library('table');
 				$this->table->set_empty("&nbsp;");
-                $this->table->set_heading('No.', 'Nombre', 'Correo', 'Acci&oacute;n');
+                $this->table->set_heading('No.', 'Nombre', 'Sala', 'Acci&oacute;n');
                 $i = 0;
                 foreach ($registros->result() as $registro)
-                    $this->table->add_row(++$i, $registro->Nombre, $registro->CorreoAdministrador, 
+                    $this->table->add_row(++$i, $registro->Nombre, $registro->NombreSala, 
                             anchor("reserva/CargaVista/$Vista/" . $registro->CodReserva, 
                             ($Modificacion==1? ' Modificar ':' Ver '), 
                             array('class'=>($Modificacion==1? 'actualiza':'vista'))). '  '.
@@ -103,6 +112,7 @@ class Reserva extends CI_Controller {
             }
         } else {
             $data['VistaPrincipal'] = 'vista_busca_reserva';
+			$data['ComboSalas'] = $this->modelo_sala->ComboSalas(set_value('CodSala'),0);
             $data['Modificacion'] = $Modificacion;            
         }
 		$this->load->view('vista_maestra', $data);
@@ -110,17 +120,34 @@ class Reserva extends CI_Controller {
 
     function ModificaReserva() {
 		$this->form_validation->set_rules('Nombre', 'nombre', 'trim|xss_clean');
-		$this->form_validation->set_rules('Correo', 'correo', 'trim|xss_clean');
 
         $data['VistaMenu'] = 'vista_menu_admin';
         if ($this->form_validation->run()) {
             $Accion = $this->input->post("submit");
 			if ($Accion == "Guardar") {
-                $Activo = $this->input->post('Activo')? 1: 0;
+                $Estado = $this->input->post('Estado')? 1: 0;
 				if ($this->session->userdata('UsuarioPrueba')==1){
 					$data['Mensaje'] = $this->funciones->MensajePrueba();
 				}else{
-					$this->modelo_reserva->Update($this->input->post('CodReserva'), $this->input->post('Nombre'), $this->input->post('Correo'), $Activo);
+					$CodRepeticion=$this->input->post('CodRepeticion');
+					$Comienzo=explode('/',$this->input->post('Comienzo'));
+					$FechaInicio=mktime(0,0,0, $Comienzo[1],$Comienzo[0],$Comienzo[2]);
+					$Final=explode('/',$this->input->post('FechaFinal'));
+					$FechaFinal=mktime(0,0,0, $Final[1],$Final[0],$Final[2]);
+					$HoraInicio=$this->input->post('HoraInicio')+$FechaInicio;
+					$HoraFin=$this->input->post('HoraFin')+$FechaInicio;
+					$DiaCompleto = $this->input->post('DiaCompleto')? 1: 0;
+					$DiasSemana = (($this->input->post('DiasSemana_1'))?1:0).(($this->input->post('DiasSemana_2'))?1:0).(($this->input->post('DiasSemana_3'))?1:0).(($this->input->post('DiasSemana_4'))?1:0).(($this->input->post('DiasSemana_5'))?1:0).(($this->input->post('DiasSemana_6'))?1:0).(($this->input->post('DiasSemana_7'))?1:0);
+					if ($this->input->post('Repeticion')!='N'){
+						if ($CodRepeticion!=0)
+							$this->modelo_repeticion->Update($CodRepeticion,$this->input->post('Nombre'), $this->input->post('Descripcion'), $Estado, $this->input->post('CodSala'), $HoraInicio, $HoraFin, $DiaCompleto, $FechaFinal, $DiasSemana, $this->input->post('Repeticion'));
+						else
+							$CodRepeticion=$this->modelo_repeticion->Insert($this->input->post('Nombre'), $this->input->post('Descripcion'), $Estado, $this->input->post('CodSala'), $HoraInicio, $HoraFin, $DiaCompleto, $FechaFinal, $DiasSemana, $this->input->post('Repeticion'));
+					} else {
+						$this->modelo_repeticion->Delete($CodRepeticion);
+						$CodRepeticion=0;
+					}
+					$CodReserva = $this->modelo_reserva->Update($this->input->post('CodReserva'),$this->input->post('Nombre'), $this->input->post('Descripcion'), $Estado, $this->input->post('CodSala'), $HoraInicio, $HoraFin, $CodRepeticion);
 					$data['Mensaje'] = 'Se han modificado los datos de la reserva.';
 				}
                 $data['VistaPrincipal'] = 'vista_mensaje';
@@ -144,6 +171,20 @@ class Reserva extends CI_Controller {
     function CargaVista($Vista, $CodReserva) {
         $data['VistaMenu'] = 'vista_menu_admin';
         $data['Fila'] = $this->modelo_reserva->getFila($CodReserva);
+		$data['PeriodoRepeticion']=(!isset($data['Fila']->PeriodoRepeticion) || $data['Fila']->PeriodoRepeticion=='') ? 'N' : $data['Fila']->PeriodoRepeticion;
+		$data['ComboSalas'] = $this->modelo_sala->ComboSalas($data['Fila']->CodSala);		
+		$data['Fecha'] = ($data['Fila']->HoraInicio!='') ? date('d/m/Y',$data['Fila']->HoraInicio):date('d/m/Y');
+		$data['FechaFinal'] = ($data['Fila']->FechaFinal!='') ? date('d/m/Y',$data['Fila']->FechaFinal) :date('d/m/Y');
+		$data['ComboHoras_Inicio'] = $this->ComboHoras(date('H',$data['Fila']->HoraInicio),date('i',$data['Fila']->HoraInicio));
+		$data['ComboHoras_Fin'] = $this->ComboHoras(date('H',$data['Fila']->HoraFin),date('i',$data['Fila']->HoraFin));
+		$data['DiasSemana'] = $this->DiasSemana($data['Fila']->DiasSemana);
+		$data['Repeticiones'] = $this->TiposRepeticion($data['PeriodoRepeticion']);
+		
+		$data['NombreSala'] = $this->modelo_sala->NombreSala($data['Fila']->CodSala);		
+		$data['HoraInicio']=date('H',$data['Fila']->HoraInicio).':'.(date('i',$data['Fila']->HoraInicio));
+		$data['HoraFin']=date('H',$data['Fila']->HoraFin).':'.(date('i',$data['Fila']->HoraFin));
+		$data['DiasSemana_consulta'] = $this->DiasSemana($data['Fila']->DiasSemana,1);
+		$data['Repeticiones_consulta'] = $this->TiposRepeticion($data['PeriodoRepeticion'],1);
 		$data['VistaPrincipal'] = $Vista;
         $this->load->view('vista_maestra', $data);
     }
@@ -160,22 +201,24 @@ class Reserva extends CI_Controller {
 				<label>&nbsp;</label><input type='radio' name='Repeticion' id='Repeticion' ".(($Tipo=='S')? "checked='checked'":'')." value='S' /> Semanal <br />
 				<label>&nbsp;</label><input type='radio' name='Repeticion' id='Repeticion' ".(($Tipo=='M')? "checked='checked'":'')." value='M' /> Mensual <br />";
 	}*/
-	function TiposRepeticion($Tipo='N'){
-		return " <input type='radio' name='Repeticion' id='Repeticion' ".(($Tipo=='N')? "checked='checked'":'')." value='N' /> Ninguna &nbsp;&nbsp;&nbsp;
-				<input type='radio' name='Repeticion' id='Repeticion' ".(($Tipo=='D')? "checked='checked'":'')." value='D' /> Diaria &nbsp;&nbsp;&nbsp;
-				<input type='radio' name='Repeticion' id='Repeticion' ".(($Tipo=='S')? "checked='checked'":'')." value='S' /> Semanal &nbsp;&nbsp;&nbsp;
-				<input type='radio' name='Repeticion' id='Repeticion' ".(($Tipo=='M')? "checked='checked'":'')." value='M' /> Mensual <br />";
+	function TiposRepeticion($Tipo='N',$Consulta=0){
+		$disabled=($Consulta==1)?'disabled="disabled"':'';
+		return " <input type='radio' name='Repeticion' id='Repeticion' $disabled ".(($Tipo=='N')? "checked='checked'":'')." value='N' /> Ninguna &nbsp;&nbsp;&nbsp;
+				<input type='radio' name='Repeticion' id='Repeticion' $disabled ".(($Tipo=='D')? "checked='checked'":'')." value='D' /> Diaria &nbsp;&nbsp;&nbsp;
+				<input type='radio' name='Repeticion' id='Repeticion' $disabled ".(($Tipo=='S')? "checked='checked'":'')." value='S' /> Semanal &nbsp;&nbsp;&nbsp;
+				<input type='radio' name='Repeticion' id='Repeticion' $disabled ".(($Tipo=='M')? "checked='checked'":'')." value='M' /> Mensual <br />";
 	}
 	
-	function DiasSemana($Dias='0000000'){
+	function DiasSemana($Dias='0000000',$Consulta=0){
+		$disabled=($Consulta==1)?'disabled="disabled"':'';
 		return "<div style='margin-left:150px;'>
-				<input type='checkbox' name='DiasSemana_1' id='DiasSemana_1' ".(($Dias{0}=='1')? "checked='checked'":'')." value='1' /> Lunes &nbsp;&nbsp;&nbsp;
-				<input type='checkbox' name='DiasSemana_2' id='DiasSemana_2' ".(($Dias{1}=='1')? "checked='checked'":'')." value='1' /> Martes &nbsp;&nbsp;&nbsp;
-				<input type='checkbox' name='DiasSemana_3' id='DiasSemana_3' ".(($Dias{2}=='1')? "checked='checked'":'')." value='1' /> Miercoles <br />
-				<input type='checkbox' name='DiasSemana_4' id='DiasSemana_4' ".(($Dias{3}=='1')? "checked='checked'":'')." value='1' /> Jueves &nbsp;&nbsp;
-				<input type='checkbox' name='DiasSemana_5' id='DiasSemana_5' ".(($Dias{4}=='1')? "checked='checked'":'')." value='1' /> Viernes &nbsp;
-				<input type='checkbox' name='DiasSemana_6' id='DiasSemana_6' ".(($Dias{5}=='1')? "checked='checked'":'')." value='1' /> Sabado <br />
-				<input type='checkbox' name='DiasSemana_7' id='DiasSemana_7' ".(($Dias{6}=='1')? "checked='checked'":'')." value='1' /> Domingo <br />
+				<input type='checkbox' name='DiasSemana_1' id='DiasSemana_1' $disabled ".(($Dias{0}=='1')? "checked='checked'":'')." value='1' /> Lunes &nbsp;&nbsp;&nbsp;
+				<input type='checkbox' name='DiasSemana_2' id='DiasSemana_2' $disabled ".(($Dias{1}=='1')? "checked='checked'":'')." value='1' /> Martes &nbsp;&nbsp;&nbsp;
+				<input type='checkbox' name='DiasSemana_3' id='DiasSemana_3' $disabled ".(($Dias{2}=='1')? "checked='checked'":'')." value='1' /> Miercoles <br />
+				<input type='checkbox' name='DiasSemana_4' id='DiasSemana_4' $disabled ".(($Dias{3}=='1')? "checked='checked'":'')." value='1' /> Jueves &nbsp;&nbsp;
+				<input type='checkbox' name='DiasSemana_5' id='DiasSemana_5' $disabled ".(($Dias{4}=='1')? "checked='checked'":'')." value='1' /> Viernes &nbsp;
+				<input type='checkbox' name='DiasSemana_6' id='DiasSemana_6' $disabled ".(($Dias{5}=='1')? "checked='checked'":'')." value='1' /> Sabado <br />
+				<input type='checkbox' name='DiasSemana_7' id='DiasSemana_7' $disabled ".(($Dias{6}=='1')? "checked='checked'":'')." value='1' /> Domingo <br />
 				</div>";
 	}
 

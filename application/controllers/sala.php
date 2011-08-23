@@ -42,7 +42,7 @@ class Sala extends CI_Controller {
 		
         $data['VistaMenu'] = 'vista_menu_admin';
         if ($this->form_validation->run()) {
-            $registros = $this->modelo_sala->Busqueda($this->input->post('Nombre'), $this->input->post('Correo'));
+            $registros = $this->modelo_sala->Busqueda($this->input->post('Nombre'));
             if( $Modificacion==1 )
                 $Vista = 'vista_modifica_sala';
             else

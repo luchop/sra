@@ -28,10 +28,9 @@ class Modelo_repeticion extends CI_Model {
 		return $this->db->insert_id();
     }
 
-		//No listo
 	function Update($CodRepeticion, $Nombre, $Descripcion, $Estado, $CodSala, $HoraInicio, $HoraFin, $DiaCompleto, $FechaFinal, $DiasSemana, $PeriodoRepeticion) {
-		$sql = "UPDATE $this->Tabla SET Nombre='$Nombre', Descripcion='$Descripcion', CodGrupo='$CodGrupo', Capacidad='$Capacidad',
-				CorreoAdministrador='$CorreoAdministrador', Activo=$Activo, Orden='$Orden'
+		$sql = "UPDATE $this->Tabla SET Nombre='$Nombre', Descripcion='$Descripcion', Estado='$Estado', CodSala='$CodSala', HoraInicio='$HoraInicio', 
+				HoraFin='$HoraFin', DiaCompleto='$DiaCompleto', FechaFinal='$FechaFinal', DiasSemana='$DiasSemana', PeriodoRepeticion='$PeriodoRepeticion'
                 WHERE CodRepeticion=$CodRepeticion";
         return $this->db->query($sql);
     }
