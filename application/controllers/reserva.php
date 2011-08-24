@@ -41,21 +41,27 @@ class Reserva extends CI_Controller {
 	
 	function ObtieneReservas(){
 		$registros = $this->modelo_reserva->Busqueda('', '', '');
+		$mes=date('n');
 		$reservas='[';
+		for($i=1;$i<=30;$i++){
+			$reservas.='{"id":"0","title":"Crear nuevo","start":new Date(2011,'.$mes.','.$i.',0,0),"end":new Date(2011,'.$mes.','.$i.',1,0),allDay: true,url:"'.base_url().'index.php/reserva/NuevaReserva/'.$mes.'/'.$i.'"}, ';
+		}
 		foreach ($registros->result() as $registro){
 			$FechaFin=($registro->FechaFinal!='')?date('Y,n,j,',$registro->FechaFinal).date('G,i',$registro->HoraFin):date('Y,n,j,',$registro->HoraInicio).date('G,i',$registro->HoraFin);
 			$DiaCompleto=($registro->DiaCompleto==1)?'true':'false';
-			$reservas.='{"id":"'.$registro->CodReserva.'","title":"'.$registro->Nombre.'","start":new Date('.date('Y,n,j,G,i',$registro->HoraInicio).'),"end":new Date('.$FechaFin.'),allDay: '.$DiaCompleto.'}, ';
+			$reservas.='{"id":"'.$registro->CodReserva.'","title":"'.$registro->Nombre.'","start":new Date('.date('Y,n,j,G,i',$registro->HoraInicio).'),"end":new Date('.$FechaFin.'),allDay: '.$DiaCompleto.',url:"'.base_url().'index.php/reserva/CargaVista/vista_modifica_reserva/'.$registro->CodReserva.'"}, ';
 		}
 		$reservas.=']';
 		return ($reservas);
 	}
 
-    function NuevaReserva() {
+    function NuevaReserva($mes='',$dia='') {
 		$this->form_validation->set_rules('Nombre', 'nombre', 'xss_clean');
 
         $data['VistaMenu'] = 'vista_menu_admin';
-		$data['Fecha'] = date('d/m/Y');
+		$mes=($mes=='')?date('m'):$mes;
+		$dia=($dia=='')?date('d'):$dia;
+		$data['Fecha'] = $dia.'/'.$mes.'/'.date('Y');
         if ($this->form_validation->run()) {
 		    $Estado = $this->input->post('Estado')? 1: 0;
 			if ($this->session->userdata('UsuarioPrueba')==1){

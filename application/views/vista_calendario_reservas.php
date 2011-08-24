@@ -9,12 +9,8 @@
 				center: 'title',
 				right: 'month,agendaDay'
 			},
-			editable: true,
+			editable: false,
 			events: <?php echo $Reservas; ?>,
-			eventDrop: function(event, delta) {
-				alert(event.title + ' was moved ' + delta + ' days\n' +
-					'(should probably update your database)');
-			},
 			loading: function(bool) {
 				if (bool) $('#loading').show();
 				else $('#loading').hide();
