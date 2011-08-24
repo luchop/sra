@@ -30,8 +30,26 @@ class Reserva extends CI_Controller {
     }
 
     function Index() {
-	    redirect('reserva/NuevaReserva','refresh');
+	    redirect('reserva/CalendarioReservas','refresh');
     }
+	
+	function CalendarioReservas(){
+		$data['VistaPrincipal'] = 'vista_calendario_reservas';
+		$data['Reservas'] = $this->ObtieneReservas();
+		$this->load->view('vista_maestra', $data);
+	}
+	
+	function ObtieneReservas(){
+		$registros = $this->modelo_reserva->Busqueda('', '', '');
+		$reservas='[';
+		foreach ($registros->result() as $registro){
+			$FechaFin=($registro->FechaFinal!='')?date('Y,n,j,',$registro->FechaFinal).date('G,i',$registro->HoraFin):date('Y,n,j,',$registro->HoraInicio).date('G,i',$registro->HoraFin);
+			$DiaCompleto=($registro->DiaCompleto==1)?'true':'false';
+			$reservas.='{"id":"'.$registro->CodReserva.'","title":"'.$registro->Nombre.'","start":new Date('.date('Y,n,j,G,i',$registro->HoraInicio).'),"end":new Date('.$FechaFin.'),allDay: '.$DiaCompleto.'}, ';
+		}
+		$reservas.=']';
+		return ($reservas);
+	}
 
     function NuevaReserva() {
 		$this->form_validation->set_rules('Nombre', 'nombre', 'xss_clean');
