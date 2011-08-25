@@ -21,15 +21,15 @@ class Modelo_reserva extends CI_Model {
 		$this->CodUsuario=$CodUsuario;
 	}
 
-	function Insert($Nombre, $Descripcion, $Estado, $CodSala, $HoraInicio, $HoraFin, $CodRepeticion) {
-        $sql = "INSERT INTO $this->Tabla (Nombre, Descripcion, Estado, CodSala, HoraInicio, HoraFin, CodRepeticion, CodUsuario, CodInstitucion) 
-                VALUES ('$Nombre', '$Descripcion', '$Estado', '$CodSala', '$HoraInicio', '$HoraFin', '$CodRepeticion', $this->CodUsuario, $this->CodInstitucion)";
+	function Insert($Nombre, $Descripcion, $Notas, $Estado, $CodSala, $HoraInicio, $HoraFin, $CodRepeticion) {
+        $sql = "INSERT INTO $this->Tabla (Nombre, Descripcion, Notas, Estado, CodSala, HoraInicio, HoraFin, CodRepeticion, CodUsuario, CodInstitucion) 
+                VALUES ('$Nombre', '$Descripcion', '$Notas', '$Estado', '$CodSala', '$HoraInicio', '$HoraFin', '$CodRepeticion', $this->CodUsuario, $this->CodInstitucion)";
         $this->db->query($sql);
     }
 	
-	function Update($CodReserva, $Nombre, $Descripcion, $Estado, $CodSala, $HoraInicio, $HoraFin, $CodRepeticion) {
-		$sql = "UPDATE $this->Tabla SET Nombre='$Nombre', Descripcion='$Descripcion', Estado='$Estado', CodSala='$CodSala', HoraInicio='$HoraInicio', 
-				HoraFin='$HoraFin', CodRepeticion='$CodRepeticion'
+	function Update($CodReserva, $Nombre, $Descripcion, $Notas, $Estado, $CodSala, $HoraInicio, $HoraFin, $CodRepeticion) {
+		$sql = "UPDATE $this->Tabla SET Nombre='$Nombre', Descripcion='$Descripcion', Notas='$Notas', Estado='$Estado', CodSala='$CodSala', 
+				HoraInicio='$HoraInicio', HoraFin='$HoraFin', CodRepeticion='$CodRepeticion'
                 WHERE CodReserva=$CodReserva";
         return $this->db->query($sql);
     }

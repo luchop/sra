@@ -80,7 +80,7 @@ class Reserva extends CI_Controller {
 				if ($this->input->post('Repeticion')!='N'){
 					$CodRepeticion=$this->modelo_repeticion->Insert($this->input->post('Nombre'), $this->input->post('Descripcion'), $Estado, $this->input->post('CodSala'), $HoraInicio, $HoraFin, $DiaCompleto, $FechaFinal, $DiasSemana, $this->input->post('Repeticion'));
 				}
-				$CodReserva = $this->modelo_reserva->Insert($this->input->post('Nombre'), $this->input->post('Descripcion'), $Estado, $this->input->post('CodSala'), $HoraInicio, $HoraFin, $CodRepeticion);
+				$CodReserva = $this->modelo_reserva->Insert($this->input->post('Nombre'), $this->input->post('Descripcion'), $this->input->post('Notas'), $Estado, $this->input->post('CodSala'), $HoraInicio, $HoraFin, $CodRepeticion);
 				$data['Mensaje'] = "Se ha registrado una nueva reserva.";
 			}
             $data['VistaPrincipal'] = 'vista_mensaje';
@@ -172,7 +172,7 @@ class Reserva extends CI_Controller {
 						$this->modelo_repeticion->Delete($CodRepeticion);
 						$CodRepeticion=0;
 					}
-					$CodReserva = $this->modelo_reserva->Update($this->input->post('CodReserva'),$this->input->post('Nombre'), $this->input->post('Descripcion'), $Estado, $this->input->post('CodSala'), $HoraInicio, $HoraFin, $CodRepeticion);
+					$CodReserva = $this->modelo_reserva->Update($this->input->post('CodReserva'),$this->input->post('Nombre'), $this->input->post('Descripcion'), $this->input->post('Notas'), $Estado, $this->input->post('CodSala'), $HoraInicio, $HoraFin, $CodRepeticion);
 					$data['Mensaje'] = 'Se han modificado los datos de la reserva.';
 				}
                 $data['VistaPrincipal'] = 'vista_mensaje';

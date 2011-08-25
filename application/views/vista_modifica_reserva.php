@@ -54,6 +54,9 @@ echo form_open('reserva/ModificaReserva',  array('id' => 'Reserva', 'name' => 'R
 <label for='Descripcion'>Descripci&oacute;n </label>
 <input type='text' id='Descripcion' name='Descripcion' size='40' maxlength='50' value='<?php echo $Fila->Descripcion; ?>' /><br />
 
+<label for='Notas'>Notas </label>
+<textarea id='Notas' name='Notas' rows='4' cols='30'><?php echo $Fila->Notas; ?></textarea><br />
+
 <label for='Estado'>Confirmada *</label>
 <input type='checkbox' id='Estado' name='Estado' <?php echo ($Fila->Estado==1?'checked':''); ?> /><br />
 

@@ -48,6 +48,9 @@ function HabilitaHoras(tipo){
 <label for='Descripcion'>Descripci&oacute;n </label>
 <?php echo $Fila->Descripcion; ?><br />
 
+<label for='Notas'>Notas </label>
+<textarea id='Notas' name='Notas' rows='4' cols='30' readonly='readonly'><?php echo $Fila->Notas; ?></textarea><br />
+
 <label for='Estado'>Confirmada</label>
 <input type='checkbox' id='Estado' name='Estado' disabled='disabled' <?php echo ($Fila->Estado==1?'checked':''); ?> /><br />
 
