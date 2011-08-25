@@ -5,6 +5,7 @@ class Reserva extends CI_Controller {
 	private $RangoHoras;
 	private $HoraInicioCombo;
 	private $HoraFinCombo;
+	private $CodUsuario;
 
     function __construct() {
         parent::__construct();
@@ -18,9 +19,9 @@ class Reserva extends CI_Controller {
 		$this->modelo_reserva->SetCodInstitucion($CodInstitucion);
 		$this->modelo_repeticion->SetCodInstitucion($CodInstitucion);
 		
-		$CodUsuario=2;
-		$this->modelo_reserva->SetCodUsuario($CodUsuario);
-		$this->modelo_repeticion->SetCodUsuario($CodUsuario);
+		$this->CodUsuario=2;
+		$this->modelo_reserva->SetCodUsuario($this->CodUsuario);
+		$this->modelo_repeticion->SetCodUsuario($this->CodUsuario);
 		
 		//Periodo de tiempo entre horas del combo
 		$this->RangoHoras='00:30';
@@ -43,25 +44,25 @@ class Reserva extends CI_Controller {
 		$registros = $this->modelo_reserva->Busqueda('', '', '');
 		$mes=date('n');
 		$reservas='[';
-		for($i=1;$i<=30;$i++){
-			$reservas.='{"id":"0","title":"Crear nuevo","start":new Date(2011,'.$mes.','.$i.',0,0),"end":new Date(2011,'.$mes.','.$i.',1,0),allDay: true,url:"'.base_url().'index.php/reserva/NuevaReserva/'.$mes.'/'.$i.'"}, ';
-		}
 		foreach ($registros->result() as $registro){
 			$FechaFin=($registro->FechaFinal!='')?date('Y,n,j,',$registro->FechaFinal).date('G,i',$registro->HoraFin):date('Y,n,j,',$registro->HoraInicio).date('G,i',$registro->HoraFin);
 			$DiaCompleto=($registro->DiaCompleto==1)?'true':'false';
-			$reservas.='{"id":"'.$registro->CodReserva.'","title":"'.$registro->Nombre.'","start":new Date('.date('Y,n,j,G,i',$registro->HoraInicio).'),"end":new Date('.$FechaFin.'),allDay: '.$DiaCompleto.',url:"'.base_url().'index.php/reserva/CargaVista/vista_modifica_reserva/'.$registro->CodReserva.'"}, ';
+			$Vista=($this->CodUsuario==$registro->CodUsuario)?'vista_modifica_reserva':'vista_consulta_reserva';
+			$reservas.='{"id":"'.$registro->CodReserva.'","title":"'.$registro->Nombre.'","start":new Date('.date('Y,n,j,G,i',$registro->HoraInicio).'),"end":new Date('.$FechaFin.'),allDay: '.$DiaCompleto.',url:"'.base_url().'index.php/reserva/CargaVista/'.$Vista.'/'.$registro->CodReserva.'"}, ';
 		}
 		$reservas.=']';
 		return ($reservas);
 	}
 
-    function NuevaReserva($mes='',$dia='') {
+    function NuevaReserva($anio='',$mes='',$dia='',$Hora='',$Minuto='') {
 		$this->form_validation->set_rules('Nombre', 'nombre', 'xss_clean');
 
         $data['VistaMenu'] = 'vista_menu_admin';
 		$mes=($mes=='')?date('m'):$mes;
 		$dia=($dia=='')?date('d'):$dia;
-		$data['Fecha'] = $dia.'/'.$mes.'/'.date('Y');
+		$anio=($anio=='')?date('Y'):$anio;
+		$data['Fecha'] = $dia.'/'.$mes.'/'.$anio;
+		
         if ($this->form_validation->run()) {
 		    $Estado = $this->input->post('Estado')? 1: 0;
 			if ($this->session->userdata('UsuarioPrueba')==1){
@@ -85,7 +86,7 @@ class Reserva extends CI_Controller {
             $data['VistaPrincipal'] = 'vista_mensaje';
         } else {
 			$data['ComboSalas'] = $this->modelo_sala->ComboSalas(set_value('CodSala'));
-			$data['ComboHoras'] = $this->ComboHoras();
+			$data['ComboHoras'] = $this->ComboHoras($Hora,$Minuto);
 			$data['DiasSemana'] = $this->DiasSemana();
 			$data['Repeticiones'] = $this->TiposRepeticion();
             $data['VistaPrincipal'] = 'vista_nueva_reserva';

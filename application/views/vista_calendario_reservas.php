@@ -14,6 +14,18 @@
 			loading: function(bool) {
 				if (bool) $('#loading').show();
 				else $('#loading').hide();
+			},
+			dayClick: function(date, allDay, jsEvent, view) {
+				dia=$.fullCalendar.formatDate(date, 'd');
+				mes=$.fullCalendar.formatDate(date, 'M');
+				anio=$.fullCalendar.formatDate(date, 'yyyy');
+				if (allDay) {
+					window.location='NuevaReserva/'+anio+'/'+mes+'/'+dia;
+				}else{
+					hora=$.fullCalendar.formatDate(date, 'H');
+					minuto=$.fullCalendar.formatDate(date, 'm');
+					window.location='NuevaReserva/'+anio+'/'+mes+'/'+dia+'/'+hora+'/'+minuto;
+				}
 			}
 		});
 	});
