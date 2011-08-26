@@ -6,18 +6,24 @@ class Reserva extends CI_Controller {
 	private $HoraInicioCombo;
 	private $HoraFinCombo;
 	private $CodUsuario;
+	private $CodInstitucion;
 
     function __construct() {
         parent::__construct();
 		$this->load->model('modelo_repeticion', '', TRUE);
 		$this->load->model('modelo_reserva', '', TRUE);
 		$this->load->model('modelo_sala', '', TRUE);
+		$this->load->model('modelo_grupo', '', TRUE);
+		$this->load->model('modelo_usuario', '', TRUE);
 		$this->load->library('funciones');
+		$this->load->library('fpdf');
+		define('FPDF_FONTPATH',$this->config->item('fonts_path'));
 		$this->form_validation->set_error_delimiters('<div class="error">', '</div>');		
-		$CodInstitucion=$this->session->userdata('CodInstitucion');
-		$this->modelo_sala->SetCodInstitucion($CodInstitucion);
-		$this->modelo_reserva->SetCodInstitucion($CodInstitucion);
-		$this->modelo_repeticion->SetCodInstitucion($CodInstitucion);
+		$this->CodInstitucion=$this->session->userdata('CodInstitucion');
+		$this->modelo_sala->SetCodInstitucion($this->CodInstitucion);
+		$this->modelo_reserva->SetCodInstitucion($this->CodInstitucion);
+		$this->modelo_repeticion->SetCodInstitucion($this->CodInstitucion);
+		$this->modelo_grupo->SetCodInstitucion($this->CodInstitucion);
 		
 		$this->CodUsuario=2;
 		$this->modelo_reserva->SetCodUsuario($this->CodUsuario);
@@ -52,6 +58,34 @@ class Reserva extends CI_Controller {
 		}
 		$reservas.=']';
 		return ($reservas);
+	}
+	
+	function ReporteReservas(){
+		$this->form_validation->set_rules('Nombre', 'nombre', 'xss_clean');
+		
+		if ($this->form_validation->run()) {
+			$Estado = $this->input->post('Estado')? 1: 0;
+			$FechaInicio='';
+			if ($this->input->post('Comienzo')!=''){
+				$Comienzo=explode('/',$this->input->post('Comienzo'));
+				$FechaInicio=mktime(0,0,0, $Comienzo[1],$Comienzo[0],$Comienzo[2]);
+			}
+
+			if ($this->input->post('FechaFinal')!='')
+				$Final=explode('/',$this->input->post('FechaFinal'));
+			else
+				$Final=explode('/',date('d/m/Y'));
+			$FechaFinal=mktime(0,0,0, $Final[1],$Final[0],$Final[2]);
+			
+			$data['Tabla'] = $this->modelo_reserva->Reporte($this->input->post('Nombre'),$FechaInicio,$FechaFinal,$this->input->post('CodGrupo'),$this->input->post('CodSala'),$Estado,$this->input->post('CodUsuario'));
+			$this->load->view('vista_reporte_reservas_pdf', $data);
+		}else{
+			$data['VistaPrincipal'] = 'vista_reporte_reservas';
+			$data['ComboSalas'] = $this->modelo_sala->ComboSalas(set_value('CodSala'),0);
+			$data['ComboGrupos'] = $this->modelo_grupo->ComboGrupos(set_value('CodGrupo'),0);
+			$data['ComboUsuarios'] = $this->modelo_usuario->ComboUsuarios($this->CodInstitucion,'',0);
+			$this->load->view('vista_maestra', $data);
+		}
 	}
 
     function NuevaReserva($anio='',$mes='',$dia='',$Hora='',$Minuto='') {

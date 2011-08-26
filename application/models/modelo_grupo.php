@@ -61,7 +61,7 @@ class Modelo_grupo extends CI_Model {
         $resultado = $this->db->query($sql);
         $s = "<select name='CodGrupo' id='CodGrupo'>";
 		if ($Requerido==0)
-			$s .= "<option value=''>-- Seleccione el usuario --</option>";
+			$s .= "<option value=''>-- Seleccione el grupo --</option>";
         foreach($resultado->result() as $row) 
             $s .= "<option value=".$row->CodGrupo.($CodGrupo==$row->CodGrupo? ' selected ':'').">".$row->Nombre."</option>";
         return $s."</select>";
