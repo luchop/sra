@@ -17,6 +17,7 @@ class Reserva extends CI_Controller {
 		$this->load->model('modelo_usuario', '', TRUE);
 		$this->load->library('funciones');
 		$this->load->library('fpdf');
+		//$this->session->set_userdata('UsuarioPrueba', 1);
 		define('FPDF_FONTPATH',$this->config->item('fonts_path'));
 		$this->form_validation->set_error_delimiters('<div class="error">', '</div>');		
 		$this->CodInstitucion=$this->session->userdata('CodInstitucion');
