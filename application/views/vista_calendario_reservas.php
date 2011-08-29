@@ -31,16 +31,29 @@
 	});
 </script>
 <style type='text/css'>
-	body {
+	#calendar {
+		float: left;
+		width: 900px;
+		height: 750px;
+		margin: 0 auto;
 		margin-top: 40px;
 		text-align: center;
 		font-size: 14px;
 		font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
 		}
-	#calendar {
-		width: 900px;
-		margin: 0 auto;
-		}
 </style>
 <br /><br /><br /><br /><br />
+
+<fieldset>
+<?php 
+echo form_open("reserva/BuscaParaModificar/0",  array('id' => 'Reserva', 'name' => 'Reserva'));
+?>
+<label for='Nombre'>Nombre </label>
+<input id='Nombre' name='Nombre' size='40' maxlength='50' value='' /><br />
+<button class='button positive' style='margin-left:220px;'> 
+	<img src='<?php echo base_url();?>bt/images/icons/tick.png' alt='' /> Buscar
+</button>
+</form>
+</fieldset>
+
 <div id='calendar'></div>

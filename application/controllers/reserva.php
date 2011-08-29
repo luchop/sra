@@ -19,14 +19,14 @@ class Reserva extends CI_Controller {
 		$this->load->library('fpdf');
 		//$this->session->set_userdata('UsuarioPrueba', 1);
 		define('FPDF_FONTPATH',$this->config->item('fonts_path'));
-		$this->form_validation->set_error_delimiters('<div class="error">', '</div>');		
-		$this->CodInstitucion=$this->session->userdata('CodInstitucion');
+		$this->form_validation->set_error_delimiters('<div class="error">', '</div>');
+		$this->CodInstitucion=(($this->session->userdata('CodInstitucion')) ? $this->session->userdata('CodInstitucion') : 2);
 		$this->modelo_sala->SetCodInstitucion($this->CodInstitucion);
 		$this->modelo_reserva->SetCodInstitucion($this->CodInstitucion);
 		$this->modelo_repeticion->SetCodInstitucion($this->CodInstitucion);
 		$this->modelo_grupo->SetCodInstitucion($this->CodInstitucion);
 		
-		$this->CodUsuario=2;
+		$this->CodUsuario=0;
 		$this->modelo_reserva->SetCodUsuario($this->CodUsuario);
 		$this->modelo_repeticion->SetCodUsuario($this->CodUsuario);
 		
@@ -52,10 +52,11 @@ class Reserva extends CI_Controller {
 		$mes=date('n');
 		$reservas='[';
 		foreach ($registros->result() as $registro){
-			$FechaFin=($registro->FechaFinal!='')?date('Y,n,j,',$registro->FechaFinal).date('G,i',$registro->HoraFin):date('Y,n,j,',$registro->HoraInicio).date('G,i',$registro->HoraFin);
+			$FechaFin=($registro->FechaFinal!='')?date('Y,(n-1),j,',$registro->FechaFinal).date('G,i',$registro->HoraFin):date('Y,(n-1),j,',$registro->HoraInicio).date('G,i',$registro->HoraFin);
 			$DiaCompleto=($registro->DiaCompleto==1)?'true':'false';
 			$Vista=($this->CodUsuario==$registro->CodUsuario)?'vista_modifica_reserva':'vista_consulta_reserva';
-			$reservas.='{"id":"'.$registro->CodReserva.'","title":"'.$registro->Nombre.'","start":new Date('.date('Y,n,j,G,i',$registro->HoraInicio).'),"end":new Date('.$FechaFin.'),allDay: '.$DiaCompleto.',url:"'.base_url().'index.php/reserva/CargaVista/'.$Vista.'/'.$registro->CodReserva.'"}, ';
+			$reservas.='{"id":"'.$registro->CodReserva.'","title":"'.$registro->Nombre.'","start":new Date('.date('Y,(n-1),j,G,i',$registro->HoraInicio).'),"end":new Date('.$FechaFin.'),allDay: '.$DiaCompleto.',url:"'.base_url().'index.php/reserva/CargaVista/'.$Vista.'/'.$registro->CodReserva.'"}, 
+			';
 		}
 		$reservas.=']';
 		return ($reservas);
@@ -154,6 +155,11 @@ class Reserva extends CI_Controller {
 				$data['DiasSemana'] = $this->DiasSemana($data['Fila']->DiasSemana);
 				$data['Repeticiones'] = $this->TiposRepeticion($data['PeriodoRepeticion']);
 								
+				$data['NombreSala'] = $this->modelo_sala->NombreSala($data['Fila']->CodSala);		
+				$data['HoraInicio']=date('H',$data['Fila']->HoraInicio).':'.(date('i',$data['Fila']->HoraInicio));
+				$data['HoraFin']=date('H',$data['Fila']->HoraFin).':'.(date('i',$data['Fila']->HoraFin));
+				$data['DiasSemana_consulta'] = $this->DiasSemana($data['Fila']->DiasSemana,1);
+				$data['Repeticiones_consulta'] = $this->TiposRepeticion($data['PeriodoRepeticion'],1);
                 $data['VistaPrincipal'] = $Vista;
             } else {
                 $this->load->library('table');

@@ -16,7 +16,7 @@ echo form_open("reserva/BuscaParaModificar/$Modificacion",  array('id' => 'Reser
 
 <button class='button positive' style='margin-left:220px;'> 
 	<img src='<?php echo base_url();?>bt/images/icons/tick.png' alt='' /> Buscar
-</button> 	  
+</button>
 </form>
 </fieldset>
 </div>

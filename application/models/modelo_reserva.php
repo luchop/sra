@@ -35,7 +35,7 @@ class Modelo_reserva extends CI_Model {
     }
 
     function Busqueda($Nombre,$Descripcion,$Sala) {
-        $sql = "select $this->Tabla.*,sala.Nombre as NombreSala,rep.FechaFinal,rep.DiaCompleto from $this->Tabla 
+        $sql = "select $this->Tabla.*,sala.Nombre as NombreSala,rep.FechaFinal,rep.DiaCompleto,rep.FechaFinal,rep.DiasSemana,rep.PeriodoRepeticion from $this->Tabla 
 				left join sala on $this->Tabla.CodSala=sala.CodSala
 				left join repeticion rep on $this->Tabla.CodRepeticion=rep.CodRepeticion
 				where 
