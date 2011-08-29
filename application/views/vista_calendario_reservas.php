@@ -10,6 +10,8 @@
 				right: 'month,agendaDay'
 			},
 			editable: false,
+			firstHour: 6,
+			timeFormat: 'H(:mm)',
 			events: <?php echo $Reservas; ?>,
 			loading: function(bool) {
 				if (bool) $('#loading').show();
