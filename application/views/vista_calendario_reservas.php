@@ -43,6 +43,7 @@
 		}
 </style>
 <br /><br /><br /><br /><br />
+<div id="loading">Cargando...</div>
 
 <fieldset>
 <?php 

@@ -14,8 +14,6 @@
             
 		echo "<title>SRA: Reserva de ambientes</title>";
 
-        
-		echo "<script type='text/javascript' language='javascript' src='".base_url()."scripts/jquery.dropdownPlain.js'></script>";
 		echo "<!--[if lte IE 7]>
 				<link rel='stylesheet' type='text/css' href='".base_url()."iemenu.css' media='screen' />
 			<![endif]-->";		
@@ -27,6 +25,7 @@
 		echo "<link href='" . base_url() . "style/cwcalendar.css' rel='stylesheet' type='text/css' />";
 		echo "<script type='text/javascript' src='".base_url()."scripts/calendar.js'></script>";        
 		echo "<script type='text/javascript' src='".base_url()."scripts/jquery.js'></script>";       
+		echo "<script type='text/javascript' language='javascript' src='".base_url()."scripts/jquery.dropdownPlain.js'></script>";
 		echo "<link rel='stylesheet' href='".base_url()."style/stylemenu.css' type='text/css' media='screen, projection'/>";
 		echo "<link href='" . base_url() . "style/estilo.css' rel='stylesheet' type='text/css' />";
 		echo "<script type='text/javascript' src='".base_url()."scripts/jquery.validate.js'></script>";

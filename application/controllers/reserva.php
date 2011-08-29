@@ -51,14 +51,14 @@ class Reserva extends CI_Controller {
 		$registros = $this->modelo_reserva->Busqueda('', '', '');
 		$mes=date('n');
 		$reservas='[';
+		$reservasArray=array();
 		foreach ($registros->result() as $registro){
 			$FechaFin=($registro->FechaFinal!='')?date('Y,(n-1),j,',$registro->FechaFinal).date('G,i',$registro->HoraFin):date('Y,(n-1),j,',$registro->HoraInicio).date('G,i',$registro->HoraFin);
 			$DiaCompleto=($registro->DiaCompleto==1)?'true':'false';
 			$Vista=($this->CodUsuario==$registro->CodUsuario)?'vista_modifica_reserva':'vista_consulta_reserva';
-			$reservas.='{"id":"'.$registro->CodReserva.'","title":"'.$registro->Nombre.'","start":new Date('.date('Y,(n-1),j,G,i',$registro->HoraInicio).'),"end":new Date('.$FechaFin.'),allDay: '.$DiaCompleto.',url:"'.base_url().'index.php/reserva/CargaVista/'.$Vista.'/'.$registro->CodReserva.'"}, 
-			';
+			$reservasArray[]='{"id":"'.$registro->CodReserva.'","title":"'.$registro->Nombre.'","start":new Date('.date('Y,(n-1),j,G,i',$registro->HoraInicio).'),"end":new Date('.$FechaFin.'),allDay: '.$DiaCompleto.',url:"'.base_url().'index.php/reserva/CargaVista/'.$Vista.'/'.$registro->CodReserva.'"}';
 		}
-		$reservas.=']';
+		$reservas.=implode(',',$reservasArray).']';
 		return ($reservas);
 	}
 	
